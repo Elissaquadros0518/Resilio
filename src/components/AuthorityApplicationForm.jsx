@@ -106,7 +106,7 @@ export default function AuthorityApplicationForm({ onCancel, onSubmitted }) {
       <div className="mb-5 flex items-start justify-between gap-3">
         <div>
           <h3 id="authority-application-form-heading" className="text-lg font-bold text-slate-900 dark:text-slate-100">Request Authority Access</h3>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Your request stays pending until the Riskscape project owner reviews it. It does not change your community role.</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">Your request stays pending until the ResiliMap project owner reviews it. It does not change your community role.</p>
         </div>
         <button type="button" onClick={onCancel} aria-label="Close application form" className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-4 focus:ring-emerald-100 dark:hover:bg-navy-700"><X className="h-4 w-4" aria-hidden="true" /></button>
       </div>

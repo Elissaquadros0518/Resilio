@@ -11,7 +11,7 @@ export default function SearchModal({ isSearchOpen, setIsSearchOpen, searchQuery
           <Search className="w-5 h-5 text-slate-400" />
           <input 
             type="text"
-            placeholder="Search Riskscape locations, incidents, or emergency resources..."
+            placeholder="Search ResiliMap locations, incidents, or emergency resources..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-transparent outline-none text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm font-medium"

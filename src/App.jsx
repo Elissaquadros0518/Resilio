@@ -221,7 +221,7 @@ export default function App() {
     setReportLoading(false);
     setReportsUpdatedAt(Date.now());
     setMyReports((current) => [result.report, ...current.filter((report) => report.id !== result.report.id)]);
-    showToast(result.evidenceError ? 'Report saved; evidence upload needs attention.' : 'Report saved to Riskscape.');
+    showToast(result.evidenceError ? 'Report saved; evidence upload needs attention.' : 'Report saved to ResiliMap.');
     return result;
   };
 
@@ -269,13 +269,12 @@ export default function App() {
 
   return (
     <div className={`min-h-screen flex flex-col ${
-      isPublicView ? 'bg-stone-50 text-stone-900' :
       darkMode ? 'dark bg-navy-900 text-slate-100' : 'bg-stone-50 text-slate-900'
     }`}>
 
       {/* ── Public views: landing and sign-in ─── */}
-      {activeTab === 'landing' && <LandingPage setActiveTab={navigate} />}
-      {(activeTab === 'sign-in' || activeTab === 'forgot-password' || activeTab === 'reset-password') && <SignInPage setActiveTab={navigate} onAuthSuccess={finishSignIn} />}
+      {activeTab === 'landing' && <LandingPage setActiveTab={navigate} darkMode={darkMode} setDarkMode={setDarkMode} />}
+      {(activeTab === 'sign-in' || activeTab === 'forgot-password' || activeTab === 'reset-password') && <SignInPage setActiveTab={navigate} onAuthSuccess={finishSignIn} darkMode={darkMode} setDarkMode={setDarkMode} />}
 
       {/* ── App shell: only shown when signed in ─ */}
       {!isPublicView && (
@@ -317,7 +316,7 @@ export default function App() {
                 </div>
               </div>
             )}
-            {reportLoading && reportSource === 'supabase' && <div className="mx-auto max-w-7xl px-4 pt-4 text-sm text-slate-500" role="status">Loading reports from Riskscape…</div>}
+            {reportLoading && reportSource === 'supabase' && <div className="mx-auto max-w-7xl px-4 pt-4 text-sm text-slate-500" role="status">Loading reports from ResiliMap…</div>}
             {(authLoading || (user && profileLoading && ['report', 'authority'].includes(activeTab))) && ['report', 'profile', 'authority'].includes(activeTab) ? (
               <div className="mx-auto my-24 max-w-md px-5 text-center text-sm font-semibold text-slate-500" role="status">Restoring your secure session…</div>
             ) : !user && ['report', 'profile'].includes(activeTab) ? (
@@ -330,7 +329,7 @@ export default function App() {
               <section className="mx-auto my-16 max-w-xl px-5 text-center" role="alert">
                 <div className="rounded-3xl border border-rose-200 bg-white p-8 shadow-card">
                   <h2 className="text-2xl font-extrabold text-stone-900">Access unavailable</h2>
-                  <p className="mt-3 text-sm leading-relaxed text-stone-600">This page requires an approved authority role and active jurisdiction assignment. {authorityError ? `Authorization could not be checked: ${authorityError.message}` : authorityAccess?.application_status === 'pending' ? 'Your application is pending project-owner review.' : authorityAccess?.application_status === 'rejected' ? 'Your application was rejected.' : profileStatus === 'error' ? 'Your profile could not be loaded, so no authority access is available.' : 'Your account does not have an approved authority role and active jurisdiction assignment.'} Contact the Riskscape project owner if you need access.</p>
+                  <p className="mt-3 text-sm leading-relaxed text-stone-600">This page requires an approved authority role and active jurisdiction assignment. {authorityError ? `Authorization could not be checked: ${authorityError.message}` : authorityAccess?.application_status === 'pending' ? 'Your application is pending project-owner review.' : authorityAccess?.application_status === 'rejected' ? 'Your application was rejected.' : profileStatus === 'error' ? 'Your profile could not be loaded, so no authority access is available.' : 'Your account does not have an approved authority role and active jurisdiction assignment.'} Contact the ResiliMap project owner if you need access.</p>
                   <p className="mt-4 text-xs text-stone-500">Client-side gating is only a navigation aid. A connected server must enforce every permission.</p>
                   <button onClick={() => navigate('home')} className="mt-6 rounded-xl bg-emerald-800 px-5 py-3 text-sm font-bold text-white hover:bg-emerald-900">Return to public information</button>
                 </div>

@@ -9,14 +9,14 @@ export default function HomePage({ setActiveTab, reports = [], reportsLoading, r
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9 space-y-8 animate-fadeIn">
       
       {/* Hero Banner */}
-      <div className="relative bg-gradient-to-br from-emerald-50 via-white to-teal-50 text-slate-900 p-6 sm:p-10 rounded-3xl border border-emerald-100 shadow-card overflow-hidden">
+      <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6 text-slate-900 shadow-card dark:border-slate-700 dark:from-navy-800 dark:via-navy-900 dark:to-navy-800 dark:text-slate-100 sm:p-10">
         <div className="relative z-10 max-w-3xl space-y-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="bg-white text-emerald-800 border border-emerald-200 text-xs font-bold px-3.5 py-1 rounded-full flex items-center space-x-2">
+            <span className="flex items-center space-x-2 rounded-full border border-emerald-200 bg-white px-3.5 py-1 text-xs font-bold text-emerald-800 dark:border-slate-600 dark:bg-navy-700 dark:text-emerald-200">
               <span className="w-2 h-2 rounded-full bg-emerald-700"></span>
               <span>Community reports & local weather</span>
             </span>
-            <span className="bg-white text-slate-600 border border-slate-200 text-xs font-medium px-3.5 py-1 rounded-full flex items-center space-x-1.5">
+            <span className="flex items-center space-x-1.5 rounded-full border border-slate-200 bg-white px-3.5 py-1 text-xs font-medium text-slate-600 dark:border-slate-600 dark:bg-navy-700 dark:text-slate-200">
               <MapPin className="w-3.5 h-3.5 text-emerald-800" />
               <span>Vidyavihar, Mumbai, Maharashtra</span>
             </span>
@@ -24,7 +24,7 @@ export default function HomePage({ setActiveTab, reports = [], reportsLoading, r
           <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight max-w-2xl">
             Turn local observations into smarter climate action.
           </h2>
-          <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-2xl">
+          <p className="max-w-2xl text-sm leading-relaxed text-slate-600 dark:text-slate-300 sm:text-base">
             Your neighbourhood. Your observations. A more resilient community. View community reports alongside weather estimates for local context.
           </p>
           <div className="flex flex-wrap gap-4 pt-4">
@@ -37,7 +37,7 @@ export default function HomePage({ setActiveTab, reports = [], reportsLoading, r
             </button>
             <button 
               onClick={() => setActiveTab('map')}
-              className="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 px-5 py-3 rounded-xl text-sm font-bold transition flex items-center space-x-2.5"
+              className="flex items-center space-x-2.5 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:bg-navy-700 dark:text-slate-100 dark:hover:bg-navy-600"
             >
               <Map className="w-5 h-5" />
               <span>Explore Live Map</span>
@@ -56,7 +56,7 @@ export default function HomePage({ setActiveTab, reports = [], reportsLoading, r
               <ShieldAlert className="h-5 w-5 text-tealAccent" />
               <span>Risk Overview</span>
             </h3>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Recent community reports submitted to Riskscape.</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Recent community reports submitted to ResiliMap.</p>
           </div>
           <button onClick={() => setActiveTab('map')} className="text-xs font-bold text-tealAccent hover:underline flex items-center space-x-1">
             <span>View all reports</span>
@@ -67,7 +67,7 @@ export default function HomePage({ setActiveTab, reports = [], reportsLoading, r
         {reportSource !== 'demo' && reportsError && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs text-rose-900">Live reports could not be refreshed: {reportsError.message || 'Connection error.'} {canRetryReports && <button type="button" onClick={onRetryReports} disabled={reportsLoading} className="font-bold underline disabled:opacity-60">Retry</button>}</p>}
         {reportsLoading && <p role="status" className="rounded-2xl border border-slate-200 bg-white p-5 text-sm text-slate-500 dark:border-slate-700 dark:bg-navy-800 dark:text-slate-300">Loading reports…</p>}
         {!reportsLoading && !recentReports.length && !reportsError && <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-7 text-center dark:border-slate-700 dark:bg-navy-800"><p className="font-semibold text-slate-800 dark:text-slate-100">No community reports yet</p><p className="mt-1 text-sm text-slate-500 dark:text-slate-400">New reports will appear here after they are submitted.</p><button type="button" onClick={() => setActiveTab('report')} className="mt-4 rounded-xl bg-emerald-800 px-4 py-2.5 text-sm font-bold text-white hover:bg-emerald-900">Report an issue</button></div>}
-        {!reportsLoading && !recentReports.length && reportsError && reportSource !== 'demo' && <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-900">Reports are unavailable. Retry the connection to load the current Riskscape data.</div>}
+        {!reportsLoading && !recentReports.length && reportsError && reportSource !== 'demo' && <div role="alert" className="rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-900">Reports are unavailable. Retry the connection to load the current ResiliMap data.</div>}
         {recentReports.length > 0 && <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {recentReports.map((rep) => (
             <article key={rep.id} className="bg-white dark:bg-navy-800 p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-card flex flex-col justify-between gap-4">

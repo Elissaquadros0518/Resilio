@@ -283,7 +283,7 @@ export async function createReport(input, { onEvidenceProgress } = {}) {
   // Development diagnostics deliberately omit the access token and all other
   // session credentials. This snapshot is taken immediately before the INSERT.
   if (import.meta.env.DEV) {
-    console.info('[Riskscape] report insert auth snapshot', {
+    console.info('[ResiliMap] report insert auth snapshot', {
       projectHost: supabaseProjectHost,
       sessionExists: Boolean(session?.access_token),
       userId: session?.user?.id || null,
@@ -310,7 +310,7 @@ export async function createReport(input, { onEvidenceProgress } = {}) {
     // Supabase error metadata is useful for RLS diagnosis. Never log headers,
     // keys, or tokens; keep this diagnostic available only in development.
     if (import.meta.env.DEV) {
-      console.error('[Riskscape] report insert failed', {
+      console.error('[ResiliMap] report insert failed', {
         projectHost: supabaseProjectHost,
         userId: session.user.id,
         httpStatus: error.status || null,

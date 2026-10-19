@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { MapPin, ArrowLeft, Eye, EyeOff, LogIn, UserPlus, Mail, LockKeyhole, ShieldAlert } from 'lucide-react';
+import { MapPin, ArrowLeft, Eye, EyeOff, LogIn, UserPlus, Mail, LockKeyhole, ShieldAlert, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../auth/AuthProvider';
 
 const initialValues = { name: '', email: '', password: '', confirm: '' };
 const getInitialView = () => new URLSearchParams(window.location.search).get('tab') === 'reset-password' ? 'reset' : 'signin';
 
-export default function SignInPage({ setActiveTab, onAuthSuccess }) {
+export default function SignInPage({ setActiveTab, onAuthSuccess, darkMode, setDarkMode }) {
   const { configured, authLoading, user, signIn, signUp, resetPassword, updatePassword, refreshProfile } = useAuth();
   const [view, setView] = useState(getInitialView);
   const [values, setValues] = useState(initialValues);
@@ -17,7 +17,7 @@ export default function SignInPage({ setActiveTab, onAuthSuccess }) {
 
   const update = (key) => (event) => setValues((previous) => ({ ...previous, [key]: event.target.value }));
   const changeView = (next) => { setView(next); setErrors({}); setNotice(''); setErrorMessage(''); };
-  const fieldClass = (hasError) => `w-full rounded-xl border ${hasError ? 'border-rose-400 focus:ring-rose-100' : 'border-stone-200 focus:border-teal-600 focus:ring-teal-100'} bg-white px-4 py-3 text-sm text-stone-900 outline-none focus:ring-4 transition`;
+  const fieldClass = (hasError) => `w-full rounded-xl border ${hasError ? 'border-rose-400 focus:ring-rose-100' : 'border-stone-200 focus:border-teal-600 focus:ring-teal-100'} bg-white dark:bg-[#171717] px-4 py-3 text-sm text-stone-900 dark:text-slate-100 outline-none focus:ring-4 transition`;
 
   const submit = async (event) => {
     event.preventDefault();
@@ -70,14 +70,19 @@ export default function SignInPage({ setActiveTab, onAuthSuccess }) {
   };
 
   const title = view === 'signin' ? 'Welcome back' : view === 'signup' ? 'Join your community' : view === 'forgot' ? 'Forgot your password?' : 'Choose a new password';
-  const subtitle = view === 'signin' ? 'Sign in to continue to Riskscape.' : view === 'signup' ? 'Create a community account. Authority access can be requested from your profile after signing in.' : view === 'forgot' ? 'Enter your email and we’ll send a reset link if an account exists.' : 'Choose a password with at least 8 characters.';
+  const subtitle = view === 'signin' ? 'Sign in to continue to ResiliMap.' : view === 'signup' ? 'Create a community account. Authority access can be requested from your profile after signing in.' : view === 'forgot' ? 'Enter your email and we’ll send a reset link if an account exists.' : 'Choose a password with at least 8 characters.';
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-[#f5f8f5] px-4 py-8 sm:py-12">
+    <main className="auth-page flex min-h-screen flex-col items-center justify-center bg-[#f5f8f5] dark:bg-[#050505] px-4 py-8 sm:py-12">
       <div className="w-full max-w-md">
-        <button onClick={() => setActiveTab('landing')} className="mb-6 inline-flex items-center gap-2 rounded text-sm font-semibold text-stone-600 hover:text-teal-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-700"><ArrowLeft className="h-4 w-4" /> Back to Riskscape</button>
-        <section className="rounded-3xl border border-stone-200 bg-white p-6 shadow-xl shadow-emerald-950/5 sm:p-9">
-          <div className="mb-7 flex items-center gap-3"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-800 text-white"><MapPin className="h-6 w-6" /></div><div><div className="text-lg font-extrabold text-stone-900">Riskscape</div><div className="text-xs text-stone-500">Mapping Risks. Building Resilience.</div></div></div>
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <button onClick={() => setActiveTab('landing')} className="inline-flex items-center gap-2 rounded text-sm font-semibold text-stone-600 dark:text-slate-300 hover:text-teal-800 dark:hover:text-emerald-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-700"><ArrowLeft className="h-4 w-4" /> Back to ResiliMap</button>
+          <button type="button" onClick={() => setDarkMode(!darkMode)} aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} aria-pressed={darkMode} title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'} className="rounded-xl border border-stone-200 bg-white p-2.5 text-stone-600 transition hover:bg-stone-100 dark:border-[#303030] dark:bg-[#111111] dark:text-slate-200 dark:hover:bg-[#242424]">
+            {darkMode ? <Sun className="h-5 w-5" aria-hidden="true" /> : <Moon className="h-5 w-5" aria-hidden="true" />}
+          </button>
+        </div>
+        <section className="rounded-3xl border border-stone-200 bg-white dark:border-[#2b2b2b] dark:bg-[#111111] p-6 shadow-xl shadow-emerald-950/5 sm:p-9">
+          <div className="mb-7 flex items-center gap-3"><div className="grid h-12 w-12 place-items-center rounded-2xl bg-emerald-800 text-white"><MapPin className="h-6 w-6" /></div><div><div className="text-lg font-extrabold text-stone-900">ResiliMap</div><div className="text-xs text-stone-500">Map Today. Prepare for Tomorrow.</div><div className="text-[10px] text-stone-400">Community-Powered Climate Resilience Platform</div></div></div>
           <h1 className="text-2xl font-extrabold tracking-tight text-stone-900">{title}</h1>
           <p className="mt-1 text-sm text-stone-500">{subtitle}</p>
           {!configured && <div role="status" className="mt-5 rounded-xl border border-amber-200 bg-amber-50 p-3.5 text-xs leading-relaxed text-amber-900"><strong>Setup required:</strong> Authentication is unavailable until this app has a Supabase project URL and publishable key in its local environment.</div>}
@@ -94,7 +99,7 @@ export default function SignInPage({ setActiveTab, onAuthSuccess }) {
             {notice && <div role="status" className="rounded-xl border border-sky-200 bg-sky-50 p-3.5 text-xs leading-relaxed text-sky-900">{notice}</div>}
             <button type="submit" disabled={submitting || authLoading} className="flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-800 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-emerald-900 disabled:cursor-wait disabled:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-700">{submitting ? 'Please wait…' : view === 'signin' ? <><LogIn className="h-4 w-4" /> Sign In</> : view === 'signup' ? <><UserPlus className="h-4 w-4" /> Create community account</> : view === 'forgot' ? 'Send reset link' : 'Update password'}</button>
           </form>
-          <div className="mt-6 text-center text-sm text-stone-600">{view === 'signin' && <>New to Riskscape? <button onClick={() => changeView('signup')} className="font-bold text-teal-800 hover:underline">Create an account</button></>}{view === 'signup' && <>Already registered? <button onClick={() => changeView('signin')} className="font-bold text-teal-800 hover:underline">Sign in</button></>}{(view === 'forgot' || view === 'reset') && <button onClick={() => changeView('signin')} className="font-bold text-teal-800 hover:underline">Return to sign in</button>}</div>
+          <div className="mt-6 text-center text-sm text-stone-600">{view === 'signin' && <>New to ResiliMap? <button onClick={() => changeView('signup')} className="font-bold text-teal-800 hover:underline">Create an account</button></>}{view === 'signup' && <>Already registered? <button onClick={() => changeView('signin')} className="font-bold text-teal-800 hover:underline">Sign in</button></>}{(view === 'forgot' || view === 'reset') && <button onClick={() => changeView('signin')} className="font-bold text-teal-800 hover:underline">Return to sign in</button>}</div>
           {view !== 'reset' && <button onClick={() => setActiveTab('map')} className="mt-5 flex w-full items-center justify-center text-xs font-semibold text-stone-500 hover:text-teal-800">Explore public risk information without signing in</button>}
         </section>
         <p className="mt-5 flex items-start justify-center gap-2 px-2 text-center text-xs leading-relaxed text-stone-500"><ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" /> Role-based UI checks are for navigation only. Database policies enforce access to protected data.</p>

@@ -196,7 +196,7 @@ export default function ProfilePage({
   };
 
   const memberSince = user?.created_at ? formatDate(user.created_at, { month: 'long', year: 'numeric' }) : 'Membership date unavailable';
-  const fullName = profile?.display_name?.trim() || 'Riskscape member';
+  const fullName = profile?.display_name?.trim() || 'ResiliMap member';
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-7 sm:px-6 sm:py-10 lg:px-8">
       <header className="mb-7">

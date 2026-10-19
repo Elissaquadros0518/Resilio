@@ -5,7 +5,7 @@ export default function AlertsPage({ notifications, setActiveTab }) {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9 space-y-6 animate-fadeIn">
       <div>
         <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Climate Alerts & Early Warnings</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Real-time hazard advisories issued for Vidyavihar ward via Riskscape.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Real-time hazard advisories issued for Vidyavihar ward via ResiliMap.</p>
       </div>
 
       <div className="space-y-4">

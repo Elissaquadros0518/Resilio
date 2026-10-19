@@ -188,7 +188,7 @@ export default function LiveMapPage({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-slate-100">Live Interactive Map</h2>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Community reports with public map details for the Riskscape coverage area.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Community reports with public map details for the ResiliMap coverage area.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" onClick={onRefreshReports} disabled={!onRefreshReports || reportsLoading} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:cursor-wait disabled:opacity-60 dark:border-slate-700 dark:bg-navy-800 dark:text-slate-200">

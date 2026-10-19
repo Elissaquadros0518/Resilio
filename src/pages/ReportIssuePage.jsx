@@ -125,7 +125,7 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
       return;
     }
     setLocating(true);
-    setGpsMessage('Your browser will ask whether Riskscape may access your location. Coordinates are used only if the browser returns them.');
+    setGpsMessage('Your browser will ask whether ResiliMap may access your location. Coordinates are used only if the browser returns them.');
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         setLocating(false);
@@ -200,7 +200,7 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9 space-y-6 animate-fadeIn">
       <div>
         <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Report an Issue</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Help make your neighbourhood safer by reporting what you observe. Powered by Riskscape.</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Help make your neighbourhood safer by reporting what you observe. Community-Powered Climate Resilience Platform.</p>
       </div>
 
       {savedReport && (
@@ -208,7 +208,7 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
           <div className="flex items-start gap-3">
             <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-700" />
             <div className="flex-1">
-              <p className="font-bold">Report saved to Riskscape</p>
+              <p className="font-bold">Report saved to ResiliMap</p>
               <p className="mt-1">Reference: {savedReport.id}</p>
               {evidenceError && <p className="mt-2 text-amber-900">{evidenceError}</p>}
               {evidenceError && evidence && <button type="button" onClick={retryEvidenceUpload} disabled={retryingEvidence} className="mt-2 rounded-lg border border-emerald-800 px-3 py-2 text-xs font-bold text-emerald-900 disabled:opacity-60">{retryingEvidence ? 'Retrying…' : 'Retry evidence upload'}</button>}

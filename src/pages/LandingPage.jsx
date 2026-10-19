@@ -6,6 +6,7 @@ import {
   ChevronRight,
   CloudRain,
   Sun,
+  Moon,
   Droplets,
   Hammer,
   Users,
@@ -23,7 +24,7 @@ import {
 /* ─────────────────────────────────────────────
    PUBLIC NAVBAR
 ───────────────────────────────────────────── */
-function PublicNavbar({ setActiveTab }) {
+function PublicNavbar({ setActiveTab, darkMode, setDarkMode }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const navLinks = [
@@ -40,7 +41,7 @@ function PublicNavbar({ setActiveTab }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-stone-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/95 dark:bg-navy-900/95 backdrop-blur-sm border-b border-stone-200 dark:border-slate-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
         {/* Wordmark */}
@@ -49,8 +50,7 @@ function PublicNavbar({ setActiveTab }) {
             <MapPin className="w-4 h-4" />
           </div>
           <div className="leading-none">
-            <span className="font-extrabold text-base text-stone-900 tracking-tight">Riskscape</span>
-            <span className="hidden sm:block text-[10px] font-medium text-teal-700 tracking-wide">Mapping Risks. Building Resilience.</span>
+            <span className="font-extrabold text-base text-stone-900 dark:text-slate-100 tracking-tight">ResiliMap</span>
           </div>
         </div>
 
@@ -60,7 +60,7 @@ function PublicNavbar({ setActiveTab }) {
             <button
               key={link.label}
               onClick={() => link.href === 'landing' ? scrollTo('hero') : scrollTo(link.href)}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium text-stone-600 hover:text-teal-700 hover:bg-teal-50 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
+              className="px-3 py-1.5 rounded-lg text-sm font-medium text-stone-600 dark:text-slate-300 hover:text-teal-700 dark:hover:text-emerald-300 hover:bg-teal-50 dark:hover:bg-slate-800 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
             >
               {link.label}
             </button>
@@ -69,6 +69,16 @@ function PublicNavbar({ setActiveTab }) {
 
         {/* CTA group */}
         <div className="hidden md:flex items-center space-x-2">
+          <button
+            type="button"
+            onClick={() => setDarkMode(!darkMode)}
+            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-pressed={darkMode}
+            title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="p-2 rounded-lg text-stone-600 dark:text-slate-200 hover:bg-stone-100 dark:hover:bg-slate-800 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
+          >
+            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
           <button
             onClick={() => setActiveTab('sign-in')}
             className="px-4 py-2 rounded-lg text-sm font-semibold text-stone-700 hover:bg-stone-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
@@ -84,31 +94,44 @@ function PublicNavbar({ setActiveTab }) {
         </div>
 
         {/* Mobile hamburger */}
-        <button
-          className="md:hidden p-2 rounded-lg text-stone-600 hover:bg-stone-100 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        >
-          {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="md:hidden flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setDarkMode(!darkMode)}
+            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-pressed={darkMode}
+            title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="p-2 rounded-lg text-stone-600 dark:text-slate-200 hover:bg-stone-100 dark:hover:bg-slate-800 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
+          >
+            {darkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+          <button
+            className="p-2 rounded-lg text-stone-600 dark:text-slate-200 hover:bg-stone-100 dark:hover:bg-slate-800 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-teal-600"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white border-t border-stone-100 px-4 py-4 space-y-1 shadow-lg animate-fadeIn">
+        <div className="md:hidden bg-white dark:bg-navy-900 border-t border-stone-100 dark:border-slate-800 px-4 py-4 space-y-1 shadow-lg animate-fadeIn">
           {navLinks.map(link => (
             <button
               key={link.label}
               onClick={() => link.href === 'landing' ? scrollTo('hero') : scrollTo(link.href)}
-              className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-stone-700 hover:bg-teal-50 hover:text-teal-700 transition"
+              className="w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium text-stone-700 dark:text-slate-200 hover:bg-teal-50 dark:hover:bg-slate-800 hover:text-teal-700 dark:hover:text-emerald-300 transition"
             >
               {link.label}
             </button>
           ))}
-          <div className="pt-3 border-t border-stone-100 space-y-2">
+          <div className="pt-3 border-t border-stone-100 dark:border-slate-800 space-y-2">
             <button
               onClick={() => { setActiveTab('sign-in'); setMenuOpen(false); }}
-              className="w-full px-4 py-2.5 rounded-lg text-sm font-semibold text-stone-700 border border-stone-200 hover:bg-stone-50 transition"
+              className="w-full px-4 py-2.5 rounded-lg text-sm font-semibold text-stone-700 dark:text-slate-200 border border-stone-200 dark:border-slate-700 hover:bg-stone-50 dark:hover:bg-slate-800 transition"
             >
               Sign In
             </button>
@@ -128,7 +151,7 @@ function PublicNavbar({ setActiveTab }) {
 /* ─────────────────────────────────────────────
    MAP PREVIEW (static illustrative panel)
 ───────────────────────────────────────────── */
-function MapPreview() {
+function MapPreview({ darkMode }) {
   const pins = [
     { top: '28%', left: '42%', color: 'bg-red-500', ring: 'ring-red-200', label: 'Flooding — HIGH' },
     { top: '52%', left: '62%', color: 'bg-orange-500', ring: 'ring-orange-200', label: 'Road Damage — MEDIUM' },
@@ -146,19 +169,19 @@ function MapPreview() {
             linear-gradient(90deg, rgba(148,163,184,0.4) 1px, transparent 1px)
           `,
           backgroundSize: '40px 40px',
-          backgroundColor: '#f1f5f9'
+          backgroundColor: darkMode ? '#1c1c1c' : '#f1f5f9'
         }}
       />
       {/* Road-like shapes */}
       <svg className="absolute inset-0 w-full h-full" viewBox="0 0 600 340" preserveAspectRatio="none">
-        <path d="M0 170 Q 150 140 300 175 Q 450 210 600 180" stroke="#cbd5e1" strokeWidth="10" fill="none" />
-        <path d="M200 0 Q 220 100 210 180 Q 205 250 215 340" stroke="#cbd5e1" strokeWidth="8" fill="none" />
-        <path d="M0 280 Q 200 260 380 270 Q 500 275 600 260" stroke="#cbd5e1" strokeWidth="6" fill="none" />
-        <path d="M350 0 Q 360 80 340 160 Q 325 240 345 340" stroke="#e2e8f0" strokeWidth="6" fill="none" />
-        <rect x="60" y="80" width="90" height="60" rx="4" fill="#e2e8f0" />
-        <rect x="410" y="200" width="110" height="70" rx="4" fill="#e2e8f0" />
-        <rect x="250" y="50" width="70" height="50" rx="4" fill="#e2e8f0" />
-        <rect x="80" y="220" width="85" height="55" rx="4" fill="#e2e8f0" />
+        <path d="M0 170 Q 150 140 300 175 Q 450 210 600 180" stroke={darkMode ? '#454545' : '#cbd5e1'} strokeWidth="10" fill="none" />
+        <path d="M200 0 Q 220 100 210 180 Q 205 250 215 340" stroke={darkMode ? '#454545' : '#cbd5e1'} strokeWidth="8" fill="none" />
+        <path d="M0 280 Q 200 260 380 270 Q 500 275 600 260" stroke={darkMode ? '#454545' : '#cbd5e1'} strokeWidth="6" fill="none" />
+        <path d="M350 0 Q 360 80 340 160 Q 325 240 345 340" stroke={darkMode ? '#383838' : '#e2e8f0'} strokeWidth="6" fill="none" />
+        <rect x="60" y="80" width="90" height="60" rx="4" fill={darkMode ? '#303030' : '#e2e8f0'} />
+        <rect x="410" y="200" width="110" height="70" rx="4" fill={darkMode ? '#303030' : '#e2e8f0'} />
+        <rect x="250" y="50" width="70" height="50" rx="4" fill={darkMode ? '#303030' : '#e2e8f0'} />
+        <rect x="80" y="220" width="85" height="55" rx="4" fill={darkMode ? '#303030' : '#e2e8f0'} />
       </svg>
 
       {/* Risk circle overlays */}
@@ -259,10 +282,10 @@ function PublicFooter({ setActiveTab }) {
             <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white">
               <MapPin className="w-4 h-4" />
             </div>
-            <span className="font-extrabold text-white text-base">Riskscape</span>
+            <span className="font-extrabold text-white text-base">ResiliMap</span>
           </div>
           <p className="text-xs text-stone-400 leading-relaxed max-w-xs">
-            A community-driven climate risk mapping and resilience platform helping communities understand local risks.
+            Community-Powered Climate Resilience Platform.
           </p>
         </div>
 
@@ -312,9 +335,9 @@ function PublicFooter({ setActiveTab }) {
       {/* Disclaimer + copyright */}
       <div className="max-w-7xl mx-auto border-t border-stone-800 pt-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <p className="text-[11px] text-stone-500 max-w-lg leading-relaxed">
-          ⚠️ Riskscape supports community awareness only and does not replace official emergency services. In an emergency, call 112 (India) or your local authority.
+          ⚠️ ResiliMap supports community awareness only and does not replace official emergency services. In an emergency, call 112 (India) or your local authority.
         </p>
-        <p className="text-[11px] text-stone-600 shrink-0">© 2026 Riskscape. All rights reserved.</p>
+        <p className="text-[11px] text-stone-600 shrink-0">© 2026 ResiliMap. All rights reserved.</p>
       </div>
     </footer>
   );
@@ -323,7 +346,7 @@ function PublicFooter({ setActiveTab }) {
 /* ─────────────────────────────────────────────
    MAIN LANDING PAGE EXPORT
 ───────────────────────────────────────────── */
-export default function LandingPage({ setActiveTab }) {
+export default function LandingPage({ setActiveTab, darkMode, setDarkMode }) {
   const riskCategories = [
     {
       icon: CloudRain,
@@ -370,8 +393,8 @@ export default function LandingPage({ setActiveTab }) {
   ];
 
   return (
-    <div className="bg-stone-50 text-stone-900 min-h-screen flex flex-col">
-      <PublicNavbar setActiveTab={setActiveTab} />
+    <div className="landing-page bg-stone-50 text-stone-900 dark:bg-navy-900 dark:text-slate-100 min-h-screen flex flex-col">
+      <PublicNavbar setActiveTab={setActiveTab} darkMode={darkMode} setDarkMode={setDarkMode} />
 
       {/* ── HERO ─────────────────────────────── */}
       <section
@@ -383,16 +406,16 @@ export default function LandingPage({ setActiveTab }) {
           {/* Location badge */}
           <div className="inline-flex items-center gap-2 bg-teal-50 border border-teal-200 text-teal-700 text-xs font-semibold px-4 py-1.5 rounded-full">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
-            Community-powered risk mapping
+            Community-Powered Climate Resilience Platform
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-extrabold text-stone-900 leading-tight tracking-tight">
-            Know Your Local Risks.{' '}
-            <span className="text-teal-700">Build a Safer Community.</span>
+            Map Today.{' '}
+            <span className="text-teal-700">Prepare for Tomorrow.</span>
           </h1>
 
           <p className="text-base sm:text-lg text-stone-500 leading-relaxed max-w-xl mx-auto lg:mx-0">
-            Riskscape lets residents report flooding, waterlogging, heat hotspots,
+            ResiliMap lets residents report flooding, waterlogging, heat hotspots,
             water shortages, and other local environmental risks — then visualises them
             on an open, community-maintained map.
           </p>
@@ -423,7 +446,7 @@ export default function LandingPage({ setActiveTab }) {
             </button>
             <button
               id="cta-explore-map"
-              onClick={() => setActiveTab('map')}
+              onClick={() => setActiveTab('sign-in')}
               className="inline-flex items-center gap-2 bg-white hover:bg-stone-100 text-stone-800 font-bold px-6 py-3.5 rounded-xl border border-stone-200 shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-400"
             >
               <Map className="w-4 h-4" />
@@ -434,7 +457,7 @@ export default function LandingPage({ setActiveTab }) {
 
         {/* Map preview */}
         <div className="flex-1 w-full max-w-xl lg:max-w-none">
-          <MapPreview />
+          <MapPreview darkMode={darkMode} />
           <p className="text-center text-[11px] text-stone-400 mt-2.5 font-medium">
             Illustrative risk map preview — real data loads after sign-in.
           </p>
@@ -474,7 +497,7 @@ export default function LandingPage({ setActiveTab }) {
       >
         <div className="text-center space-y-3">
           <span className="text-xs font-bold text-teal-700 uppercase tracking-widest">Simple process</span>
-          <h2 className="text-3xl font-extrabold text-stone-900">How Riskscape works</h2>
+          <h2 className="text-3xl font-extrabold text-stone-900">How ResiliMap works</h2>
           <p className="text-stone-500 text-base max-w-xl mx-auto leading-relaxed">
             Three steps from observation to action — no technical knowledge needed.
           </p>
@@ -512,7 +535,7 @@ export default function LandingPage({ setActiveTab }) {
             <span className="text-xs font-bold text-teal-700 uppercase tracking-widest">What you can report</span>
             <h2 className="text-3xl font-extrabold text-stone-900">Six types of local risk</h2>
             <p className="text-stone-500 text-base max-w-xl mx-auto leading-relaxed">
-              From monsoon flooding to broken infrastructure — if it affects your neighbourhood, Riskscape can map it.
+              From monsoon flooding to broken infrastructure — if it affects your neighbourhood, ResiliMap can map it.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -602,7 +625,7 @@ export default function LandingPage({ setActiveTab }) {
           <span className="text-xs font-bold text-teal-700 uppercase tracking-widest">Open & community built</span>
           <h2 className="text-2xl font-extrabold text-stone-900">Built for communities. Designed for resilience.</h2>
           <p className="text-stone-500 text-sm leading-relaxed">
-            Riskscape is an open-source civic-tech project from Don Bosco Institute of Technology. It began as a hyperlocal tool and is designed to support communities as coverage grows. The platform is free, non-commercial, and community funded.
+            ResiliMap is an open-source civic-tech project from Don Bosco Institute of Technology. It began as a hyperlocal tool and is designed to support communities as coverage grows. The platform is free, non-commercial, and community funded.
           </p>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             {['Community-led', 'Open Source', 'Non-commercial', 'Community funded'].map(tag => (
@@ -634,11 +657,11 @@ export default function LandingPage({ setActiveTab }) {
             </button>
             <button
               id="cta-final-map"
-              onClick={() => setActiveTab('map')}
+              onClick={() => setActiveTab('sign-in')}
               className="inline-flex items-center gap-2 bg-teal-800/60 hover:bg-teal-900/60 text-white font-bold text-base px-8 py-4 rounded-xl border border-white/20 transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
             >
               <Map className="w-5 h-5" />
-              Explore the map first
+              Sign in to explore the map
             </button>
           </div>
           <p className="text-teal-300 text-xs font-medium">

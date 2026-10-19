@@ -60,7 +60,7 @@ export default function CommunityPage({ onOpenReport }) {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9 space-y-8 animate-fadeIn">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">Riskscape Community</h2>
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100">ResiliMap Community</h2>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Neighbourhood participation making our community resilient, transparent, and connected.</p>
         </div>
         <div className="flex items-center gap-3">

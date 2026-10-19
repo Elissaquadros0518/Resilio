@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ShieldAlert, Bell, Sun, Moon, PlusCircle, UserRound, Menu, X, Map, BarChart3, UsersRound, LifeBuoy, ClipboardCheck } from 'lucide-react';
+import { ShieldAlert, MapPin, Bell, Sun, Moon, PlusCircle, UserRound, Menu, X, Map, BarChart3, UsersRound, LifeBuoy, ClipboardCheck } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab, isAuthorityView, hasAuthorityAccess, user, profile, onSignOut, darkMode, setDarkMode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -39,13 +39,12 @@ export default function Navbar({ activeTab, setActiveTab, isAuthorityView, hasAu
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm dark:border-slate-800 dark:bg-navy-800/95">
       <div className="mx-auto grid min-h-[4.5rem] max-w-7xl grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 xl:grid-cols-[auto_minmax(0,1fr)_auto] xl:px-8">
-        <button type="button" aria-label="Riskscape home" className="group flex min-w-0 items-center space-x-3 text-left" onClick={() => selectMobileItem('home')}>
+        <button type="button" aria-label="ResiliMap home" className="group flex min-w-0 items-center space-x-3 text-left" onClick={() => selectMobileItem('home')}>
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-800 text-white transition group-hover:bg-emerald-900">
-            <ShieldAlert className="h-6 w-6" aria-hidden="true" />
+            <MapPin className="h-6 w-6" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-lg font-extrabold tracking-tight text-emerald-900 dark:text-emerald-300">Riskscape</h1>
-            <p className="hidden whitespace-nowrap text-[11px] font-medium tracking-wide text-slate-500 dark:text-slate-400 2xl:block">Mapping Risks. Building Resilience.</p>
+            <h1 className="text-lg font-extrabold tracking-tight text-emerald-900 dark:text-slate-100">ResiliMap</h1>
           </div>
         </button>
 
@@ -63,6 +62,10 @@ export default function Navbar({ activeTab, setActiveTab, isAuthorityView, hasAu
             <span className="absolute right-2 top-2 h-2 w-2 animate-ping rounded-full bg-criticalRed" />
             <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-criticalRed" />
           </button>
+
+          {hasAuthorityAccess && <button type="button" onClick={() => setActiveTab('authority')} aria-label="Open authority dashboard" aria-current={activeTab === 'authority' ? 'page' : undefined} title="Authority dashboard" className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition focus:outline-none focus:ring-4 focus:ring-emerald-100 ${activeTab === 'authority' ? 'border-emerald-800 bg-emerald-50 text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-100' : 'border-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-navy-700'}`}>
+            <ClipboardCheck className="h-5 w-5" aria-hidden="true" />
+          </button>}
 
           {user && <button type="button" onClick={() => setActiveTab('profile')} aria-label="Open your profile" aria-current={activeTab === 'profile' ? 'page' : undefined} title="Profile" className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border transition focus:outline-none focus:ring-4 focus:ring-emerald-100 ${activeTab === 'profile' ? 'border-emerald-800 bg-emerald-50 text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-100' : 'border-transparent text-slate-600 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-navy-700'}`}>
             <UserRound className="h-5 w-5" aria-hidden="true" />

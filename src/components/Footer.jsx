@@ -10,10 +10,10 @@ export default function Footer({ setActiveTab }) {
             <div className="w-9 h-9 rounded-xl bg-emerald-800 flex items-center justify-center text-white">
               <ShieldAlert className="w-5 h-5" />
             </div>
-            <span className="font-extrabold text-lg text-slate-900 dark:text-white">Riskscape</span>
+            <span className="font-extrabold text-lg text-slate-900 dark:text-white">ResiliMap</span>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            A community-driven climate risk mapping and resilience platform. Mapping Risks. Building Resilience. — starting from Vidyavihar, Mumbai.
+            Community-Powered Climate Resilience Platform. Map Today. Prepare for Tomorrow. — starting from Vidyavihar, Mumbai.
           </p>
         </div>
         <div>
@@ -45,7 +45,7 @@ export default function Footer({ setActiveTab }) {
         </div>
       </div>
       <div className="max-w-7xl mx-auto pt-6 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
-        © 2026 Riskscape. Community-driven climate resilience for Mumbai.
+        © 2026 ResiliMap. Community-driven climate resilience for Mumbai.
       </div>
     </footer>
   );

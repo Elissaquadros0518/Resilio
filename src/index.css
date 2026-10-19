@@ -13,6 +13,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  .dark body {
+    background: #050505;
+  }
+
   button,
   input,
   textarea,
@@ -54,7 +58,7 @@
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #404040;
 }
 
 /* Risk/status text stays readable on light surfaces; dark theme uses lighter text. */
@@ -76,6 +80,112 @@
 
 .dark .text-safeGreen {
   color: #6ee7b7;
+}
+
+/* Landing page dark theme: neutral surfaces and readable gray text, scoped so
+   the existing light palette and signed-in application pages are untouched. */
+.dark .landing-page [class~="bg-white"],
+.dark .landing-page [class~="bg-white/90"] {
+  background-color: #111111;
+}
+
+.dark .landing-page [class~="bg-stone-50"],
+.dark .landing-page [class~="bg-stone-100"],
+.dark .landing-page [class~="bg-teal-50"],
+.dark .landing-page [class~="bg-sky-50"],
+.dark .landing-page [class~="bg-orange-50"],
+.dark .landing-page [class~="bg-blue-50"],
+.dark .landing-page [class~="bg-purple-50"],
+.dark .landing-page [class~="bg-green-50"] {
+  background-color: #1c1c1c;
+}
+
+.dark .landing-page [class~="text-stone-900"] {
+  color: #f4f4f5;
+}
+
+.dark .landing-page [class~="text-stone-800"],
+.dark .landing-page [class~="text-stone-700"] {
+  color: #e4e4e7;
+}
+
+.dark .landing-page [class~="text-stone-600"],
+.dark .landing-page [class~="text-stone-500"] {
+  color: #b4b4bc;
+}
+
+.dark .landing-page [class~="text-stone-400"] {
+  color: #92929b;
+}
+
+.dark .landing-page [class~="text-teal-700"],
+.dark .landing-page [class~="text-teal-800"] {
+  color: #75cfc1;
+}
+
+.dark .landing-page [class~="border-stone-100"],
+.dark .landing-page [class~="border-stone-200"],
+.dark .landing-page [class~="border-teal-100"],
+.dark .landing-page [class~="border-teal-200"] {
+  border-color: #303030;
+}
+
+.dark .landing-page [class~="hover:bg-stone-100"]:hover,
+.dark .landing-page [class~="hover:bg-stone-50"]:hover,
+.dark .landing-page [class~="hover:bg-teal-50"]:hover {
+  background-color: #242424;
+}
+
+/* Auth screens follow the saved theme, including the form and feedback panels. */
+.dark .auth-page [class~="bg-white"],
+.dark .auth-page [class~="bg-amber-50"],
+.dark .auth-page [class~="bg-emerald-50"],
+.dark .auth-page [class~="bg-rose-50"],
+.dark .auth-page [class~="bg-sky-50"] {
+  background-color: #111111;
+}
+
+.dark .auth-page [class~="text-stone-900"] {
+  color: #f4f4f5;
+}
+
+.dark .auth-page [class~="text-stone-700"],
+.dark .auth-page [class~="text-stone-600"] {
+  color: #d4d4d8;
+}
+
+.dark .auth-page [class~="text-stone-500"] {
+  color: #b4b4bc;
+}
+
+.dark .auth-page [class~="text-stone-400"] {
+  color: #92929b;
+}
+
+.dark .auth-page [class~="text-teal-800"] {
+  color: #75cfc1;
+}
+
+.dark .auth-page [class~="text-amber-900"] { color: #fcd34d; }
+.dark .auth-page [class~="text-emerald-900"] { color: #6ee7b7; }
+.dark .auth-page [class~="text-rose-900"] { color: #fda4af; }
+.dark .auth-page [class~="text-sky-900"] { color: #93c5fd; }
+
+.dark .auth-page [class~="border-stone-200"],
+.dark .auth-page [class~="border-amber-200"],
+.dark .auth-page [class~="border-emerald-200"],
+.dark .auth-page [class~="border-emerald-100"],
+.dark .auth-page [class~="border-rose-200"],
+.dark .auth-page [class~="border-sky-200"] {
+  border-color: #303030;
+}
+
+.dark .auth-page input:-webkit-autofill,
+.dark .auth-page input:-webkit-autofill:hover,
+.dark .auth-page input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f4f4f5;
+  box-shadow: 0 0 0 1000px #171717 inset;
+  transition: background-color 9999s ease-out;
 }
 
 /* Custom Animations */
