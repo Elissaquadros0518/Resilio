@@ -1,5 +1,5 @@
 {
-  "name": "vidyavihar-climate-watch",
+  "name": "riskscape",
   "private": true,
   "version": "2.0.0",
   "type": "module",
@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.56.0",
     "react": "^18.3.1",
