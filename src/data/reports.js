@@ -51,7 +51,9 @@ function normalizeCoordinates(latitude, longitude) {
   if (hasLatitude !== hasLongitude) {
     throw new ReportValidationError('Location coordinates must include both latitude and longitude.', 'location');
   }
-  if (!hasLatitude) return { latitude: null, longitude: null };
+  if (!hasLatitude) {
+    throw new ReportValidationError('Pin the report location on the map before submitting.', 'location');
+  }
 
   const lat = Number(latitude);
   const lng = Number(longitude);
@@ -67,7 +69,6 @@ export function validateReportInput(input = {}) {
   const description = cleanText(input.description);
   if (!location) throw new ReportValidationError('Enter the location of the issue.', 'location');
   if (location.length > 240) throw new ReportValidationError('Location must be 240 characters or fewer.', 'location');
-  if (!description) throw new ReportValidationError('Describe what you observed.', 'description');
   if (description.length > 5000) throw new ReportValidationError('Description must be 5,000 characters or fewer.', 'description');
 
   const severity = normalizeSeverity(input.severity);

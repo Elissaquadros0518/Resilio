@@ -4,6 +4,19 @@ import { ReportValidationError, uploadReportEvidence } from '../data/reports';
 
 const MAX_EVIDENCE_BYTES = 10 * 1024 * 1024;
 const VIDYAVIHAR = [19.076, 72.896];
+const REVERSE_GEOCODER = 'https://nominatim.openstreetmap.org/reverse';
+const placeNameCache = new Map();
+
+function formatPinnedPlace(result) {
+  const address = result?.address || {};
+  const parts = [
+    address.amenity || address.building || address.road,
+    address.neighbourhood || address.suburb,
+    address.city_district || address.city || address.town || address.village,
+  ].filter(Boolean);
+  const uniqueParts = [...new Set(parts)];
+  return (uniqueParts.join(', ') || result?.display_name?.split(',').slice(0, 3).join(',').trim() || '').slice(0, 240);
+}
 
 function ReportLocationMap({ coordinates, onSelect, interactive = true }) {
   const containerRef = useRef(null);
@@ -92,6 +105,15 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
   const photoInput = useRef(null);
   const videoInput = useRef(null);
   const submitLock = useRef(false);
+  const reverseGeocodeRequest = useRef(0);
+  const reverseGeocodeTimer = useRef(null);
+  const reverseGeocodeAbort = useRef(null);
+  const locationEditVersion = useRef(0);
+
+  useEffect(() => () => {
+    window.clearTimeout(reverseGeocodeTimer.current);
+    reverseGeocodeAbort.current?.abort();
+  }, []);
 
   const chooseFile = (event) => {
     const file = event.target.files?.[0] || null;
@@ -115,13 +137,56 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
 
   const selectCoordinates = (point) => {
     setCoordinates(point);
-    setGpsMessage('Location point selected. You can drag the pin to adjust it.');
+    setLocation('');
+    setGpsMessage('Finding the place name for this pin…');
     setErrors((current) => ({ ...current, location: '' }));
+
+    const requestId = ++reverseGeocodeRequest.current;
+    const editVersion = locationEditVersion.current;
+    window.clearTimeout(reverseGeocodeTimer.current);
+    reverseGeocodeAbort.current?.abort();
+    const cacheKey = `${point.lat.toFixed(5)},${point.lng.toFixed(5)}`;
+    const cachedName = placeNameCache.get(cacheKey);
+    if (cachedName) {
+      if (locationEditVersion.current === editVersion) setLocation(cachedName);
+      setGpsMessage(`Pinned location: ${cachedName}. You can edit the name.`);
+      return;
+    }
+
+    // User-driven reverse lookup, debounced and rate-limited to one request
+    // per second for this browser session. Repeated pins are cached in memory.
+    reverseGeocodeTimer.current = window.setTimeout(async () => {
+      const controller = new AbortController();
+      reverseGeocodeAbort.current = controller;
+      try {
+        const url = new URL(REVERSE_GEOCODER);
+        url.search = new URLSearchParams({
+          format: 'jsonv2',
+          lat: String(point.lat),
+          lon: String(point.lng),
+          zoom: '18',
+          addressdetails: '1',
+          'accept-language': 'en',
+        }).toString();
+        const response = await fetch(url, { signal: controller.signal });
+        if (!response.ok) throw new Error(`Place lookup returned ${response.status}.`);
+        const result = await response.json();
+        const placeName = formatPinnedPlace(result);
+        if (!placeName) throw new Error('No place name was found for this pin.');
+        placeNameCache.set(cacheKey, placeName);
+        if (requestId !== reverseGeocodeRequest.current || controller.signal.aborted) return;
+        if (locationEditVersion.current === editVersion) setLocation(placeName);
+        setGpsMessage(`Pinned location: ${placeName}. You can edit the name.`);
+      } catch (error) {
+        if (requestId !== reverseGeocodeRequest.current || error.name === 'AbortError') return;
+        setGpsMessage('Could not find a place name for this pin. Enter a street, landmark, or area name manually.');
+      }
+    }, 1100);
   };
 
   const useCurrentLocation = () => {
     if (!navigator.geolocation) {
-      setGpsMessage('GPS is not available in this browser. Enter a location name instead.');
+      setGpsMessage('GPS is not available in this browser. Select the report location directly on the map.');
       return;
     }
     setLocating(true);
@@ -136,11 +201,11 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
       (error) => {
         setLocating(false);
         const messages = {
-          1: 'Location permission was denied. You can enter an address or choose a point on the map.',
-          2: 'Your browser could not determine a location. You can enter an address or choose a point on the map.',
-          3: 'Location request timed out. You can enter an address or choose a point on the map.',
+          1: 'Location permission was denied. Choose the report location directly on the map.',
+          2: 'Your browser could not determine a location. Choose the report location directly on the map.',
+          3: 'Location request timed out. Choose the report location directly on the map.',
         };
-        setGpsMessage(messages[error.code] || 'Location is unavailable. You can enter an address or choose a point on the map.');
+        setGpsMessage(messages[error.code] || 'Location is unavailable. Choose the report location directly on the map.');
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
     );
@@ -149,6 +214,11 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
   const handleSubmitFinal = async (e) => {
     e.preventDefault();
     if (submitLock.current || submitting || savedReport) return;
+    if (!Number.isFinite(coordinates.lat) || !Number.isFinite(coordinates.lng)) {
+      setErrors((current) => ({ ...current, location: 'Pin the report location on the map before submitting.' }));
+      setGpsMessage('A map pin is required. Click the map, drag a pin into place, or use your current location.');
+      return;
+    }
     submitLock.current = true;
     setErrors({});
     setSubmitError('');
@@ -221,7 +291,7 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
       <form onSubmit={handleSubmitFinal} noValidate className="bg-white dark:bg-navy-800 p-5 sm:p-7 rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-card space-y-7">
         
         <div className="space-y-4">
-          <label className="block text-sm font-bold text-slate-900 dark:text-slate-100">Step 1: What did you observe?</label>
+          <label className="block text-sm font-bold text-slate-900 dark:text-slate-100">Step 1: What did you observe? <span className="text-xs font-semibold text-rose-600 dark:text-rose-400">Required</span></label>
           <div role="group" aria-label="Choose a report category" className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
             {[
               { id: 'Flooding / Waterlogging', label: 'Flooding / Water', icon: CloudRain, color: 'text-skyBlue' },
@@ -256,18 +326,23 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
         </div>
 
         <div className="space-y-3">
-          <label className="block text-sm font-bold text-slate-900 dark:text-slate-100">Step 2: Where is it located?</label>
+          <label className="block text-sm font-bold text-slate-900 dark:text-slate-100">
+            Step 2: {coordinates.lat !== null && coordinates.lng !== null
+              ? (location.trim() || 'Name the pinned location')
+              : 'Pin the location on the map'}
+            <span className="ml-2 text-xs font-semibold text-rose-600 dark:text-rose-400">Required</span>
+          </label>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               id="report-location"
               type="text"
               value={location}
-              onChange={(e) => { setLocation(e.target.value); setErrors((current) => ({ ...current, location: '' })); }}
+              onChange={(e) => { locationEditVersion.current += 1; setLocation(e.target.value); setGpsMessage('Place name updated.'); setErrors((current) => ({ ...current, location: '' })); }}
               maxLength={240}
               required
               aria-invalid={Boolean(errors.location)}
               aria-describedby={errors.location ? 'report-location-error' : undefined}
-              placeholder="Enter street, landmark or area (Vidyavihar, Mumbai)"
+              placeholder="Name the pinned place: street, landmark or area"
               className="min-w-0 flex-1 bg-slate-50 dark:bg-navy-900 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm font-medium text-slate-900 dark:text-slate-100"
             />
             <button
@@ -280,12 +355,15 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
               <span>{locating ? 'Finding location…' : 'Use my current location'}</span>
             </button>
           </div>
-          <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">Your browser will request permission only after you choose the location button. We use coordinates only when your browser provides them; you can also select or adjust a point on the map.</p>
+          <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+            A map pin is required to submit. Choose a point on the map, drag the pin into place, or use your current location. The place name fills automatically and can be edited. Pin coordinates are sent to OpenStreetMap Nominatim for this suggestion; lookups are delayed and cached, and the result is not guaranteed.{' '}
+            <a className="font-semibold text-tealAccent underline" href="https://operations.osmfoundation.org/policies/nominatim/" target="_blank" rel="noopener noreferrer">Lookup usage policy</a>.
+          </p>
           <ReportLocationMap coordinates={coordinates} onSelect={selectCoordinates} interactive={!savedReport} />
           {coordinates.lat !== null && coordinates.lng !== null && (
             <p className="text-xs font-medium text-slate-600 dark:text-slate-300" role="status">
               Selected point: {coordinates.lat.toFixed(6)}, {coordinates.lng.toFixed(6)}
-              <button type="button" disabled={Boolean(savedReport)} className="ml-2 font-bold text-tealAccent underline disabled:opacity-50" onClick={() => { setCoordinates({ lat: null, lng: null }); setGpsMessage('Point removed. The location name will still be included.'); }}>Clear point</button>
+              <button type="button" disabled={Boolean(savedReport)} className="ml-2 font-bold text-tealAccent underline disabled:opacity-50" onClick={() => { setCoordinates({ lat: null, lng: null }); setGpsMessage('Point removed. Pin a location on the map before submitting.'); }}>Clear point</button>
             </p>
           )}
           {errors.location && <p id="report-location-error" className="text-sm font-medium text-rose-700" role="alert">{errors.location}</p>}
@@ -338,13 +416,12 @@ export default function ReportIssuePage({ onAddReport, onViewReport }) {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-bold text-slate-900 dark:text-slate-100">Step 4: Describe the problem</label>
+          <label className="block text-sm font-bold text-slate-900 dark:text-slate-100">Step 4: Describe the problem (optional)</label>
           <textarea
             rows="3"
             value={description}
             onChange={(e) => { setDescription(e.target.value); setErrors((current) => ({ ...current, description: '' })); }}
             maxLength={5000}
-            required
             aria-invalid={Boolean(errors.description)}
             aria-describedby={errors.description ? 'report-description-error' : undefined}
             placeholder="Tell us what happened in detail..."
