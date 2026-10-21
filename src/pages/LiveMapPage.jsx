@@ -85,6 +85,7 @@ function convexHull(members) {
 export default function LiveMapPage({
   reports = [], reportsLoading = false, reportsError = null, reportSource = 'supabase',
   onRefreshReports, selectedIncident, setSelectedIncident, setActiveTab,
+  selectedHotspotId = null, onHotspotFocused,
 }) {
   const mapElementRef = useRef(null);
   const mapRef = useRef(null);
@@ -93,6 +94,7 @@ export default function LiveMapPage({
   const hotspotRequestRef = useRef(null);
   const setSelectedIncidentRef = useRef(setSelectedIncident);
   const setActiveTabRef = useRef(setActiveTab);
+  const onHotspotFocusedRef = useRef(onHotspotFocused);
   const [mapError, setMapError] = useState('');
   const [filterCategory, setFilterCategory] = useState('ALL');
   const [filterSeverity, setFilterSeverity] = useState('ALL');
@@ -106,6 +108,7 @@ export default function LiveMapPage({
 
   useEffect(() => { setSelectedIncidentRef.current = setSelectedIncident; }, [setSelectedIncident]);
   useEffect(() => { setActiveTabRef.current = setActiveTab; }, [setActiveTab]);
+  useEffect(() => { onHotspotFocusedRef.current = onHotspotFocused; }, [onHotspotFocused]);
 
   const refreshHotspots = useCallback(async () => {
     if (hotspotRequestRef.current) return;
@@ -235,8 +238,13 @@ export default function LiveMapPage({
           <p style="font-size:11px;color:#64748b;margin:0">${escapePopupText(hotspotData.note)}</p>
         </article>
       `);
+      if (selectedHotspotId === hotspot.cluster_id) {
+        mapRef.current?.setView([hotspot.latitude, hotspot.longitude], Math.max(mapRef.current?.getZoom() || 0, 16));
+        marker.openPopup();
+      }
     });
-  }, [hotspotData]);
+    if (selectedHotspotId !== null) onHotspotFocusedRef.current?.();
+  }, [hotspotData, selectedHotspotId]);
 
   useEffect(() => {
     const map = mapRef.current;

@@ -6,12 +6,6 @@ export const INITIAL_REPORTS = [
   { id: "VW-2026-00120", category: "Fallen Tree", location: "Nehru Nagar Link Road", lat: 19.0715, lng: 72.8912, time: "5 hours ago", severity: "HIGH", status: "Resolved", description: "Branch fell blocking half the lane. Cleared by civic workers.", evidence: "https://images.unsplash.com/photo-1508873696983-2df5c92063c7?auto=format&fit=crop&w=600&q=80", verified: true, upvotes: 31, user: "Vikram P." }
 ];
 
-export const INITIAL_ALERTS = [
-  { id: "ALT-01", type: "CRITICAL", title: "Heavy Rainfall & Tide Alert", desc: "Moderate to heavy showers expected alongside high tide in Mumbai. Avoid low-lying Vidyavihar subway.", time: "10 mins ago", category: "Flooding" },
-  { id: "ALT-02", type: "WARNING", title: "Heat Advisory (37°C)", desc: "Peak afternoon temperatures likely to induce heat stress. Stay hydrated and avoid strenuous outdoor exercise.", time: "2 hours ago", category: "Heat" },
-  { id: "ALT-03", type: "INFO", title: "Drainage Maintenance Drive", desc: "Municipal ward teams conducting desilting operations near railway tracks.", time: "1 day ago", category: "Infrastructure" }
-];
-
 export const EMERGENCY_RESOURCES = [
   { id: 'res-1', type: 'Hospitals', name: 'Rajawadi Hospital (Ghatkopar East)', distance: '1.8 km', address: 'Vallabhbhai Patel Rd, Ghatkopar East, Mumbai', phone: '+91 22 2512 7171', coords: [19.0805, 72.9080] },
   { id: 'res-2', type: 'Fire Stations', name: 'Vikhroli / Ghatkopar Fire Station', distance: '2.5 km', address: 'LBS Marg, Ghatkopar West, Mumbai', phone: '101 / +91 22 2511 2233', coords: [19.0900, 72.9100] },

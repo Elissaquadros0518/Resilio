@@ -16,7 +16,6 @@ import LandingPage from './pages/LandingPage';
 import SignInPage from './pages/SignInPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
-import { INITIAL_ALERTS } from './data/mockData';
 import { createReport, fetchMyReports, fetchPublicReports, withdrawMyReport, fetchAuthorityAccess, fetchAuthorityReports, fetchAuthorityReportDetails, fetchCommunityReportDetails, reviewReport } from './data/reports';
 import { CheckCircle } from 'lucide-react';
 import { useAuth } from './auth/AuthProvider';
@@ -36,6 +35,7 @@ export default function App() {
   const [returnTab, setReturnTab] = useState('home');
   const isAuthorityView = activeTab === 'authority' && canAccessAuthorityDashboard(role);
   const [selectedIncident, setSelectedIncident] = useState(null);
+  const [selectedHotspotId, setSelectedHotspotId] = useState(null);
   const [detailReturnTab, setDetailReturnTab] = useState('map');
   const [reports, setReports] = useState([]);
   const [reportSource, setReportSource] = useState(isSupabaseConfigured ? 'supabase' : 'demo');
@@ -56,7 +56,6 @@ export default function App() {
   const myReportsRequest = useRef(0);
   const authorityRequest = useRef(0);
   const authorityDetailsRequest = useRef(0);
-  const [notifications] = useState(INITIAL_ALERTS);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -78,6 +77,7 @@ export default function App() {
     }
     setActiveTab(tab);
   };
+  const clearSelectedHotspot = useCallback(() => setSelectedHotspotId(null), []);
   const finishSignIn = (destination) => {
     setActiveTab(destination || returnTab || 'home');
     setReturnTab('home');
@@ -357,12 +357,12 @@ export default function App() {
             ) : (
               <>
                 {activeTab === 'home' && <HomePage setActiveTab={navigate} reports={reports} reportsLoading={reportLoading} reportsError={reportLoadError} reportSource={reportSource} onRetryReports={loadReports} canRetryReports={isSupabaseConfigured} />}
-                {activeTab === 'map' && <LiveMapPage reports={reports} reportsLoading={reportLoading} reportsError={reportLoadError} reportSource={reportSource} onRefreshReports={loadReports} selectedIncident={selectedIncident} setSelectedIncident={setSelectedIncident} setActiveTab={navigate} />}
+                {activeTab === 'map' && <LiveMapPage reports={reports} reportsLoading={reportLoading} reportsError={reportLoadError} reportSource={reportSource} onRefreshReports={loadReports} selectedIncident={selectedIncident} setSelectedIncident={setSelectedIncident} setActiveTab={navigate} selectedHotspotId={selectedHotspotId} onHotspotFocused={clearSelectedHotspot} />}
                 {activeTab === 'report' && <ReportIssuePage onAddReport={handleAddReport} onViewReport={(incident) => { setSelectedIncident(incident); navigate('map'); }} />}
                 {activeTab === 'insights' && <RiskInsightsPage darkMode={darkMode} reports={reports} reportSource={reportSource} reportsLoading={reportLoading} reportsError={reportLoadError} reportsUpdatedAt={reportsUpdatedAt} onRefreshReports={loadReports} />}
                 {activeTab === 'community' && <CommunityPage onOpenReport={openCommunityReport} />}
                 {activeTab === 'resources' && <ResourcesPage />}
-                {activeTab === 'alerts' && <AlertsPage notifications={notifications} setActiveTab={navigate} />}
+                {activeTab === 'alerts' && <AlertsPage setActiveTab={navigate} onSelectHotspot={setSelectedHotspotId} />}
                 {activeTab === 'profile' && <ProfilePage darkMode={darkMode} setDarkMode={setDarkMode} reports={myReports} reportsLoading={myReportsLoading} reportsError={myReportsError} onRetryReports={loadMyReports} profile={profile} user={user} profileLoading={profileLoading} profileStatus={profileStatus} profileError={profileError} onRetryProfile={refreshProfile} onSaveProfile={updateProfile} onDeleteReport={handleWithdrawMyReport} onOpenAuthority={() => navigate('authority')} onViewReport={(incident) => { setSelectedIncident(incident); setDetailReturnTab('profile'); navigate('incident-detail'); }} />}
                 {activeTab === 'incident-detail' && <IncidentDetailPage incident={selectedIncident} setActiveTab={navigate} returnTab={detailReturnTab} />}
               </>
