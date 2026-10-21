@@ -7,6 +7,20 @@
 3. Never put a `service_role` key or database password in any `VITE_` variable or frontend file. `.env` is ignored by Git.
 4. In **Authentication → URL Configuration**, add local and deployed app origins to the allowed redirect URLs. Configure the email provider and confirmation policy as desired. Configure SMTP/email templates for production; Supabase's default mail service is rate-limited and intended for development.
 
+## Password recovery
+
+The app sends recovery emails with the exact callback `${window.location.origin}/reset-password`. In **Authentication → URL Configuration**:
+
+- Set **Site URL** to the actual production Riskscape URL. This repository has no configured production hostname, so enter the deployed Vercel domain here rather than using a placeholder.
+- Add these exact redirect URLs to **Redirect URLs**:
+  - `http://localhost:5173/reset-password`
+  - `https://YOUR-ACTUAL-VERCEL-DOMAIN/reset-password` (replace with the deployed hostname)
+- If local development uses another Vite port, add that exact reset URL too.
+- In **Authentication → Email Templates → Reset Password**, keep the link based on `{{ .ConfirmationURL }}`. Supabase uses the requested redirect URL when it verifies the recovery token and returns to the app. Do not replace it with a raw token or an unverified app URL.
+- Configure production SMTP under **Authentication → SMTP Settings** (or the current Supabase email provider settings) and verify the sender/domain. Supabase's default email service is rate-limited and is not a production delivery guarantee.
+
+The app listens for Supabase's `PASSWORD_RECOVERY` auth event and accepts a reset only when the current Supabase session is still valid and matches a recovery event recorded in the current browser tab. That tab-scoped recovery marker permits refresh during the flow; direct visits and ordinary signed-in sessions do not authorize password updates. Supabase Auth parses the recovery callback using the installed `@supabase/supabase-js` v2 client configuration (`detectSessionInUrl: true`). Vercel rewrites app routes to `index.html` so `/forgot-password` and `/reset-password` work on refresh.
+
 ## Weather data
 
 Risk Insights uses the Open-Meteo Forecast API (`https://api.open-meteo.com/v1/forecast`) for modelled current conditions and a 5-day daily forecast. The free endpoint requires no API key, so there is no weather secret to put in the browser or Supabase. `VITE_WEATHER_API_BASE_URL` in `.env` is an optional public endpoint override; it is not a credential. A successful response is cached in memory per rounded location for 10 minutes. Failures do not substitute fabricated readings, and the UI shows the weather-model timestamp separately from retrieval time.

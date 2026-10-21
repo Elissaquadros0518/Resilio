@@ -2,9 +2,11 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
 const AuthContext = createContext(null);
+const RECOVERY_SESSION_KEY = 'riskscape_password_recovery_user';
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
+  const [isRecoverySession, setIsRecoverySession] = useState(false);
   const [profile, setProfile] = useState(null);
   const [authLoading, setAuthLoading] = useState(isSupabaseConfigured);
   const [profileLoading, setProfileLoading] = useState(false);
@@ -51,14 +53,27 @@ export function AuthProvider({ children }) {
       if (!alive) return;
       const current = error ? null : data.session;
       setSession(current);
+      // A marker is written only after Supabase emits PASSWORD_RECOVERY. Keep
+      // it in this tab so refreshes can resume a verified recovery flow.
+      const recoveryUserId = window.sessionStorage.getItem(RECOVERY_SESSION_KEY);
+      const recovered = Boolean(current?.user?.id && recoveryUserId === current.user.id);
+      setIsRecoverySession(recovered);
+      if (!recovered) window.sessionStorage.removeItem(RECOVERY_SESSION_KEY);
       if (current?.user) await loadProfile(current.user.id);
       else { profileRequest.current += 1; setProfile(null); setProfileStatus('idle'); }
       if (alive) setAuthLoading(false);
     }).catch((error) => {
       if (alive) { setAuthLoading(false); setProfileError(error); setProfileStatus('error'); }
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       setSession(nextSession);
+      if (event === 'PASSWORD_RECOVERY' && nextSession?.user?.id) {
+        window.sessionStorage.setItem(RECOVERY_SESSION_KEY, nextSession.user.id);
+        setIsRecoverySession(true);
+      } else if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || !nextSession) {
+        window.sessionStorage.removeItem(RECOVERY_SESSION_KEY);
+        setIsRecoverySession(false);
+      }
       if (nextSession?.user) {
         // Defer API work outside the auth callback to avoid holding its internal lock.
         setAuthLoading(false);
@@ -80,9 +95,22 @@ export function AuthProvider({ children }) {
   }), []);
   const signOut = useCallback(() => supabase.auth.signOut(), []);
   const resetPassword = useCallback((email) => supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/?tab=reset-password`,
+    redirectTo: `${window.location.origin}/reset-password`,
   }), []);
   const updatePassword = useCallback((password) => supabase.auth.updateUser({ password }), []);
+  const clearRecoverySession = useCallback(() => {
+    window.sessionStorage.removeItem(RECOVERY_SESSION_KEY);
+    setIsRecoverySession(false);
+  }, []);
+  const validateRecoverySession = useCallback(async () => {
+    if (!supabase) return false;
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    const currentUser = sessionData?.session?.user;
+    const recoveryUserId = window.sessionStorage.getItem(RECOVERY_SESSION_KEY);
+    if (sessionError || !currentUser?.id || recoveryUserId !== currentUser.id) return false;
+    const { data, error } = await supabase.auth.getUser();
+    return !error && data?.user?.id === currentUser.id;
+  }, []);
   const refreshProfile = useCallback((userId = session?.user?.id) => (
     userId ? loadProfile(userId) : Promise.resolve({ data: null, error: null, missing: true })
   ), [session, loadProfile]);
@@ -98,9 +126,10 @@ export function AuthProvider({ children }) {
 
   const value = useMemo(() => ({
     configured: isSupabaseConfigured, authLoading, profileLoading, profileError, profileStatus, session, user: session?.user ?? null, profile,
-    role: profile?.role ?? null, signIn, signUp, signOut, resetPassword, updatePassword, updateProfile,
+    isRecoverySession,
+    role: profile?.role ?? null, signIn, signUp, signOut, resetPassword, updatePassword, clearRecoverySession, validateRecoverySession, updateProfile,
     refreshProfile,
-  }), [authLoading, profileLoading, profileError, profileStatus, session, profile, signIn, signUp, signOut, resetPassword, updatePassword, updateProfile, refreshProfile]);
+  }), [authLoading, profileLoading, profileError, profileStatus, session, profile, isRecoverySession, signIn, signUp, signOut, resetPassword, updatePassword, clearRecoverySession, validateRecoverySession, updateProfile, refreshProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

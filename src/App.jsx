@@ -14,6 +14,8 @@ import AuthorityDashboard from './pages/AuthorityDashboard';
 import IncidentDetailPage from './pages/IncidentDetailPage';
 import LandingPage from './pages/LandingPage';
 import SignInPage from './pages/SignInPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import { INITIAL_ALERTS } from './data/mockData';
 import { createReport, fetchMyReports, fetchPublicReports, withdrawMyReport, fetchAuthorityAccess, fetchAuthorityReports, fetchAuthorityReportDetails, fetchCommunityReportDetails, reviewReport } from './data/reports';
 import { CheckCircle } from 'lucide-react';
@@ -23,8 +25,14 @@ import { isSupabaseConfigured } from './lib/supabase';
 
 export default function App() {
   const { user, profile, role, authLoading, profileLoading, profileStatus, profileError, refreshProfile, signOut, updateProfile } = useAuth();
-  const initialTab = new URLSearchParams(window.location.search).get('tab');
-  const [activeTab, setActiveTab] = useState(initialTab === 'reset-password' ? 'reset-password' : 'landing');
+  const routeTab = () => {
+    const path = window.location.pathname.replace(/\/$/, '') || '/';
+    if (path === '/forgot-password') return 'forgot-password';
+    if (path === '/reset-password' || new URLSearchParams(window.location.search).get('tab') === 'reset-password') return 'reset-password';
+    if (path === '/login') return 'sign-in';
+    return 'landing';
+  };
+  const [activeTab, setActiveTab] = useState(routeTab);
   const [returnTab, setReturnTab] = useState('home');
   const isAuthorityView = activeTab === 'authority' && canAccessAuthorityDashboard(role);
   const [selectedIncident, setSelectedIncident] = useState(null);
@@ -60,6 +68,8 @@ export default function App() {
   });
 
   const navigate = (tab) => {
+    const route = { 'sign-in': '/login', 'forgot-password': '/forgot-password', 'reset-password': '/reset-password', landing: '/' }[tab];
+    if (route && window.location.pathname !== route) window.history.pushState({}, '', route);
     const protectedTabs = ['report', 'profile', 'authority'];
     if (protectedTabs.includes(tab) && !user) {
       setReturnTab(tab);
@@ -71,8 +81,14 @@ export default function App() {
   const finishSignIn = (destination) => {
     setActiveTab(destination || returnTab || 'home');
     setReturnTab('home');
-    window.history.replaceState({}, '', window.location.pathname);
+    window.history.replaceState({}, '', '/');
   };
+
+  useEffect(() => {
+    const onPopState = () => setActiveTab(routeTab());
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -274,7 +290,9 @@ export default function App() {
 
       {/* ── Public views: landing and sign-in ─── */}
       {activeTab === 'landing' && <LandingPage setActiveTab={navigate} darkMode={darkMode} setDarkMode={setDarkMode} />}
-      {(activeTab === 'sign-in' || activeTab === 'forgot-password' || activeTab === 'reset-password') && <SignInPage setActiveTab={navigate} onAuthSuccess={finishSignIn} darkMode={darkMode} setDarkMode={setDarkMode} />}
+      {activeTab === 'sign-in' && <SignInPage setActiveTab={navigate} onAuthSuccess={finishSignIn} darkMode={darkMode} setDarkMode={setDarkMode} />}
+      {activeTab === 'forgot-password' && <ForgotPasswordPage setActiveTab={navigate} darkMode={darkMode} setDarkMode={setDarkMode} />}
+      {activeTab === 'reset-password' && <ResetPasswordPage setActiveTab={navigate} darkMode={darkMode} setDarkMode={setDarkMode} />}
 
       {/* ── App shell: only shown when signed in ─ */}
       {!isPublicView && (
