@@ -11,13 +11,15 @@
 
 The app sends recovery emails with the exact callback `${window.location.origin}/reset-password`. In **Authentication → URL Configuration**:
 
-- Set **Site URL** to the actual production Riskscape URL. This repository has no configured production hostname, so enter the deployed Vercel domain here rather than using a placeholder.
+- Set **Site URL** to `https://resilimap.vercel.app`.
 - Add these exact redirect URLs to **Redirect URLs**:
   - `http://localhost:5173/reset-password`
-  - `https://YOUR-ACTUAL-VERCEL-DOMAIN/reset-password` (replace with the deployed hostname)
+  - `https://resilimap.vercel.app/reset-password`
 - If local development uses another Vite port, add that exact reset URL too.
 - In **Authentication → Email Templates → Reset Password**, keep the link based on `{{ .ConfirmationURL }}`. Supabase uses the requested redirect URL when it verifies the recovery token and returns to the app. Do not replace it with a raw token or an unverified app URL.
 - Configure production SMTP under **Authentication → SMTP Settings** (or the current Supabase email provider settings) and verify the sender/domain. Supabase's default email service is rate-limited and is not a production delivery guarantee.
+
+The default Supabase email provider is limited to **2 Auth emails per hour**. If Auth returns `over_email_send_rate_limit`, the UI asks the user to check for an already-sent link and wait before retrying. Configure custom SMTP for production email delivery and higher project email limits; see [Supabase Auth rate limits](https://supabase.com/docs/guides/auth/rate-limits) and [custom SMTP setup](https://supabase.com/docs/guides/auth/auth-smtp).
 
 The app listens for Supabase's `PASSWORD_RECOVERY` auth event and accepts a reset only when the current Supabase session is still valid and matches a recovery event recorded in the current browser tab. That tab-scoped recovery marker permits refresh during the flow; direct visits and ordinary signed-in sessions do not authorize password updates. Supabase Auth parses the recovery callback using the installed `@supabase/supabase-js` v2 client configuration (`detectSessionInUrl: true`). Vercel rewrites app routes to `index.html` so `/forgot-password` and `/reset-password` work on refresh.
 
