@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
+import { fetchHotspots } from '../data/hotspots';
 
 const CENTER = [19.076, 72.896];
 const CATEGORY_FILTERS = [
@@ -58,6 +59,29 @@ function displayDate(report) {
   return date ? date.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : 'Date unavailable';
 }
 
+function convexHull(members) {
+  const points = [...new Map(members.map(({ latitude, longitude }) =>
+    [`${longitude},${latitude}`, [longitude, latitude]]
+  )).values()].sort(([ax, ay], [bx, by]) => ax - bx || ay - by);
+  if (points.length < 3) return [];
+
+  const cross = (origin, pointA, pointB) =>
+    (pointA[0] - origin[0]) * (pointB[1] - origin[1])
+    - (pointA[1] - origin[1]) * (pointB[0] - origin[0]);
+  const lower = [];
+  points.forEach((point) => {
+    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], point) <= 0) lower.pop();
+    lower.push(point);
+  });
+  const upper = [];
+  [...points].reverse().forEach((point) => {
+    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], point) <= 0) upper.pop();
+    upper.push(point);
+  });
+  const hull = lower.slice(0, -1).concat(upper.slice(0, -1));
+  return hull.length >= 3 ? hull.map(([longitude, latitude]) => [latitude, longitude]) : [];
+}
+
 export default function LiveMapPage({
   reports = [], reportsLoading = false, reportsError = null, reportSource = 'supabase',
   onRefreshReports, selectedIncident, setSelectedIncident, setActiveTab,
@@ -65,6 +89,8 @@ export default function LiveMapPage({
   const mapElementRef = useRef(null);
   const mapRef = useRef(null);
   const markerLayerRef = useRef(null);
+  const hotspotLayerRef = useRef(null);
+  const hotspotRequestRef = useRef(null);
   const setSelectedIncidentRef = useRef(setSelectedIncident);
   const setActiveTabRef = useRef(setActiveTab);
   const [mapError, setMapError] = useState('');
@@ -73,9 +99,43 @@ export default function LiveMapPage({
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [filterDate, setFilterDate] = useState('ALL');
   const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
+  const [hotspotData, setHotspotData] = useState(null);
+  const [hotspotLoading, setHotspotLoading] = useState(false);
+  const [hotspotError, setHotspotError] = useState('');
+  const [hotspotUpdatedAt, setHotspotUpdatedAt] = useState(null);
 
   useEffect(() => { setSelectedIncidentRef.current = setSelectedIncident; }, [setSelectedIncident]);
   useEffect(() => { setActiveTabRef.current = setActiveTab; }, [setActiveTab]);
+
+  const refreshHotspots = useCallback(async () => {
+    if (hotspotRequestRef.current) return;
+    const controller = new AbortController();
+    hotspotRequestRef.current = controller;
+    setHotspotLoading(true);
+    try {
+      const data = await fetchHotspots({ signal: controller.signal });
+      setHotspotData(data);
+      setHotspotUpdatedAt(new Date());
+      setHotspotError('');
+    } catch (error) {
+      if (!controller.signal.aborted) {
+        setHotspotError(error.message || 'Hotspot data could not be refreshed.');
+      }
+    } finally {
+      if (hotspotRequestRef.current === controller) hotspotRequestRef.current = null;
+      if (!controller.signal.aborted) setHotspotLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshHotspots();
+    const refreshTimer = window.setInterval(refreshHotspots, 60_000);
+    return () => {
+      window.clearInterval(refreshTimer);
+      hotspotRequestRef.current?.abort();
+      hotspotRequestRef.current = null;
+    };
+  }, [refreshHotspots]);
 
   const filteredReports = useMemo(() => {
     const now = Date.now();
@@ -115,6 +175,7 @@ export default function LiveMapPage({
       maxZoom: 19,
     }).addTo(map);
     markerLayerRef.current = globalThis.L.layerGroup().addTo(map);
+    hotspotLayerRef.current = globalThis.L.layerGroup().addTo(map);
     const resizeObserver = typeof ResizeObserver !== 'undefined'
       ? new ResizeObserver(() => map.invalidateSize()) : null;
     resizeObserver?.observe(mapElementRef.current);
@@ -124,10 +185,58 @@ export default function LiveMapPage({
       resizeObserver?.disconnect();
       markerLayerRef.current?.clearLayers();
       markerLayerRef.current = null;
+      hotspotLayerRef.current?.clearLayers();
+      hotspotLayerRef.current = null;
       map.remove();
       mapRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    const layerGroup = hotspotLayerRef.current;
+    if (!layerGroup || !globalThis.L) return;
+    layerGroup.clearLayers();
+    if (!hotspotData) return;
+
+    hotspotData.hotspots.forEach((hotspot) => {
+      const categories = Object.entries(hotspot.categories)
+        .map(([category, count]) => `<li>${escapePopupText(category)}: ${escapePopupText(count)}</li>`)
+        .join('');
+      const severities = Object.entries(hotspot.severity_counts || {})
+        .map(([severity, count]) => `${escapePopupText(severity)} ${escapePopupText(count)}`)
+        .join(', ') || `HIGH / CRITICAL ${escapePopupText(hotspot.high_or_critical)}`;
+      const boundary = convexHull(hotspot.members);
+      if (boundary.length >= 3) {
+        globalThis.L.polygon(boundary, {
+          color: '#6d28d9',
+          weight: 2,
+          opacity: 0.9,
+          fillColor: '#a78bfa',
+          fillOpacity: 0.2,
+        }).addTo(layerGroup).bindTooltip('Approximate geographic extent of cluster');
+      }
+      const marker = globalThis.L.circleMarker([hotspot.latitude, hotspot.longitude], {
+        radius: 18,
+        color: '#6d28d9',
+        weight: 3,
+        opacity: 1,
+        fillColor: '#a78bfa',
+        fillOpacity: 0.65,
+      }).addTo(layerGroup);
+      marker.bindPopup(`
+        <article style="font-family:Inter,system-ui,sans-serif;min-width:210px;max-width:280px;padding:4px;color:#1e293b">
+          <h3 style="font-size:15px;font-weight:800;margin:2px 0 8px">Experimental geographic cluster ${escapePopupText(hotspot.cluster_id)}</h3>
+          <p style="font-size:12px;margin:3px 0"><strong>Reports:</strong> ${escapePopupText(hotspot.report_count)}</p>
+          <p style="font-size:12px;margin:3px 0"><strong>DBSCAN neighborhood distance:</strong> ${escapePopupText(hotspotData.radiusMeters)} m</p>
+          <p style="font-size:12px;margin:3px 0"><strong>Severity summary:</strong> ${severities}</p>
+          <p style="font-size:12px;margin:6px 0 2px"><strong>Categories:</strong></p>
+          <ul style="font-size:12px;margin:0 0 8px;padding-left:18px">${categories || '<li>None</li>'}</ul>
+          <p style="font-size:11px;color:#64748b;margin:0 0 6px">The neighborhood distance is not a maximum distance from the centroid. The polygon shows the cluster's approximate geographic extent, not a flood-risk boundary.</p>
+          <p style="font-size:11px;color:#64748b;margin:0">${escapePopupText(hotspotData.note)}</p>
+        </article>
+      `);
+    });
+  }, [hotspotData]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -182,6 +291,10 @@ export default function LiveMapPage({
 
   const hasFilters = filterCategory !== 'ALL' || filterSeverity !== 'ALL' || filterStatus !== 'ALL' || filterDate !== 'ALL';
   const reportsLoadIssue = reportsError && !(reportSource === 'demo' && /not configured/i.test(reportsError.message || ''));
+  const refreshReportsAndHotspots = () => {
+    onRefreshReports?.();
+    refreshHotspots();
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-9 space-y-5 animate-fadeIn">
@@ -191,14 +304,15 @@ export default function LiveMapPage({
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Community reports with public map details for the ResiliMap coverage area.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button type="button" onClick={onRefreshReports} disabled={!onRefreshReports || reportsLoading} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:cursor-wait disabled:opacity-60 dark:border-slate-700 dark:bg-navy-800 dark:text-slate-200">
-            <RefreshCw className={`h-4 w-4 ${reportsLoading ? 'animate-spin' : ''}`} /> {reportsLoading ? 'Refreshing…' : 'Refresh reports'}
+          <button type="button" onClick={refreshReportsAndHotspots} disabled={reportsLoading || hotspotLoading} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 disabled:cursor-wait disabled:opacity-60 dark:border-slate-700 dark:bg-navy-800 dark:text-slate-200">
+            <RefreshCw className={`h-4 w-4 ${reportsLoading || hotspotLoading ? 'animate-spin' : ''}`} /> {reportsLoading || hotspotLoading ? 'Refreshing…' : 'Refresh reports'}
           </button>
         </div>
       </div>
 
       {reportSource === 'demo' && <div role="status" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950"><strong>Demo mode:</strong> these are sample reports and are not mixed with persisted community reports.</div>}
-      {reportsLoadIssue && <div role="alert" className="flex flex-col gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900 sm:flex-row sm:items-center sm:justify-between"><span>Could not load the latest report data: {reportsError.message || 'Connection error.'}</span><button type="button" onClick={onRefreshReports} disabled={reportsLoading} className="shrink-0 font-bold underline disabled:opacity-50">Retry</button></div>}
+      {reportsLoadIssue && <div role="alert" className="flex flex-col gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900 sm:flex-row sm:items-center sm:justify-between"><span>Could not load the latest report data: {reportsError.message || 'Connection error.'}</span><button type="button" onClick={refreshReportsAndHotspots} disabled={reportsLoading || hotspotLoading} className="shrink-0 font-bold underline disabled:opacity-50">Retry</button></div>}
+      {hotspotError && <p role="status" className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">{hotspotData ? 'Showing the last successful hotspot data; refresh failed.' : 'Experimental hotspot data is temporarily unavailable.'} {hotspotUpdatedAt && `Last updated ${hotspotUpdatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.`}</p>}
 
       <section aria-label="Map filters" className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-navy-800">
         <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by report category">
@@ -263,7 +377,7 @@ export default function LiveMapPage({
           </div>
         </aside>
       </div>
-      <p className="text-[11px] text-slate-500 dark:text-slate-400">Marker colors show report severity. The heatmap is unavailable until a real report-density layer is implemented. Tiles © OpenStreetMap contributors; map tiles load on demand. <a className="font-semibold underline" href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener noreferrer">Report a map issue</a>.</p>
+      <p className="text-[11px] text-slate-500 dark:text-slate-400">Marker colors show report severity. Purple outlines show the approximate geographic extent of experimental DBSCAN clusters. The 250 m neighborhood distance is not a maximum distance from the centroid; the polygons are not flood-risk boundaries or validated risk scores. Tiles © OpenStreetMap contributors; map tiles load on demand. <a className="font-semibold underline" href="https://www.openstreetmap.org/fixthemap" target="_blank" rel="noopener noreferrer">Report a map issue</a>.</p>
     </div>
   );
 }

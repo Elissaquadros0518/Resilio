@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-10-21T19:36:14.759494+00:00",
+  "algorithm": "DBSCAN",
+  "radius_meters": 250,
+  "min_samples": 3,
+  "analyzed_reports": 12,
+  "cluster_count": 1,
+  "noise_count": 1,
+  "hotspots": [
+    {
+      "cluster_id": 1,
+      "latitude": 19.08126321,
+      "longitude": 72.88935690272727,
+      "report_count": 11,
+      "high_or_critical": 5,
+      "categories": {
+        "Extreme Heat": 6,
+        "Other": 4,
+        "Flooding / Waterlogging": 1
+      },
+      "members": [
+        {
+          "latitude": 19.08121655,
+          "longitude": 72.88858478
+        },
+        {
+          "latitude": 19.08106866,
+          "longitude": 72.88873499
+        },
+        {
+          "latitude": 19.08165094,
+          "longitude": 72.88902138
+        },
+        {
+          "latitude": 19.08117469,
+          "longitude": 72.8887536
+        },
+        {
+          "latitude": 19.08085482,
+          "longitude": 72.89040327
+        },
+        {
+          "latitude": 19.08147676,
+          "longitude": 72.88877315
+        },
+        {
+          "latitude": 19.0815764,
+          "longitude": 72.88885832
+        },
+        {
+          "latitude": 19.08129726,
+          "longitude": 72.89160679
+        },
+        {
+          "latitude": 19.0817513,
+          "longitude": 72.88817704
+        },
+        {
+          "latitude": 19.08080581,
+          "longitude": 72.8892231
+        },
+        {
+          "latitude": 19.08102212,
+          "longitude": 72.89078951
+        }
+      ]
+    }
+  ],
+  "note": "Experimental geographic clusters, not validated flood-risk predictions. Cluster boundaries show geographic spread, not a fixed 250 m radius."
+}
