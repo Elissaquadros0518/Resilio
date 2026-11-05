@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldAlert } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 export default function Footer({ setActiveTab }) {
   return (
@@ -7,13 +7,13 @@ export default function Footer({ setActiveTab }) {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
         <div className="space-y-4">
           <div className="flex items-center space-x-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-800 flex items-center justify-center text-white">
-              <ShieldAlert className="w-5 h-5" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-800 text-white">
+              <MapPin className="h-6 w-6" aria-hidden="true" />
             </div>
-            <span className="font-extrabold text-lg text-slate-900 dark:text-white">ResiliMap</span>
+            <span className="text-lg font-extrabold tracking-tight text-emerald-900 dark:text-slate-100">ResiliMap</span>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
-            Community-Powered Climate Resilience Platform. Map Today. Prepare for Tomorrow. — starting from Vidyavihar, Mumbai.
+            Community-Powered Climate Resilience Platform. Map Today. Prepare for Tomorrow.
           </p>
         </div>
         <div>
