@@ -1,110 +1,275 @@
+import pypandoc
 
+readme = r"""<div align="center">
 
-ResiliMap is a community-focused, hyperlocal climate resilience platform that brings local environmental incidents into one place. It is designed to help communities report and understand issues such as flooding, heatwaves, water shortages, and infrastructure failures, while making location-specific information easier to view and use.
+# 🌍 ResiliMap
 
-**Live Website:** https://resilimap.vercel.app/
+### 🗺️ Map Today. Prepare for Tomorrow.
+
+**A community-powered climate resilience platform for hyperlocal environmental awareness.**
+
+[![Live Website](https://img.shields.io/badge/🌐_Live_Website-Visit_ResiliMap-0F766E?style=for-the-badge)](https://resilimap.vercel.app/)
+[![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5.2.11-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.3-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Backend-3FCF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
+
+</div>
 
 ---
 
-## Overview
+## 📌 About the Project
 
-Weather applications commonly provide forecasts for broad geographical areas, while climate dashboards often focus on historical or large-scale data. However, many environmental problems are highly localized. Information about these incidents may be scattered across messaging applications and social media, making it difficult to verify, track, and use for planning.
+**ResiliMap** is a community-powered climate resilience platform focused on collecting, visualizing, and understanding hyperlocal environmental and infrastructure-related incidents.
 
-ResiliMap aims to bridge this gap through a centralized platform for community-reported incidents and map-based awareness. By organizing local observations geographically, the platform can help people understand what is happening around them and support more informed climate-resilience planning.
+Communities frequently experience localized flooding, heatwaves, water shortages, and infrastructure failures. However, information about these incidents is often scattered across messaging applications and social media. General weather applications tend to provide broad forecasts, while climate dashboards commonly focus on historical or large-scale information.
 
-## Problem Statement
+ResiliMap aims to bridge this gap by providing a centralized platform where local incidents can be reported and viewed in their geographical context. By making community-level information easier to access, the platform aims to improve local awareness and support climate-resilience planning.
 
-Communities regularly experience localized flooding, extreme heat, water shortages, and infrastructure-related problems that may not be adequately represented by city-wide weather information. At the same time, local incident reports are often fragmented across different communication channels.
+🌐 **Live Application:** https://resilimap.vercel.app/
 
-There is a need for a unified platform that makes hyperlocal environmental information easier to report, locate, understand, and use when planning for community resilience.
+## 🚨 Problem Statement
 
-## Objectives
+Localized climate and infrastructure issues can affect neighbourhoods without being adequately represented by city-wide weather information. Reports shared through different communication channels are fragmented, difficult to track, and challenging to use for long-term planning.
 
-- Provide a centralized space for hyperlocal environmental incident information.
-- Encourage community participation in reporting local issues.
-- Make location-specific incidents easier to understand through geographical visualization.
-- Improve awareness of recurring environmental and infrastructure challenges.
-- Support informed preparedness and long-term climate resilience planning.
+A unified platform is needed to help communities report, locate, and understand local environmental incidents and to make this information more useful for awareness, preparedness, and resilience planning.
 
-## Key Areas
+## 🎯 Objectives
 
-- **Hyperlocal incident reporting:** A platform concept for collecting information about local environmental and infrastructure-related incidents.
-- **Map-based visualization:** Presenting incident information in its geographical context.
-- **Community participation:** Enabling local observations to contribute to a broader picture of environmental challenges.
-- **Risk awareness:** Helping users recognize affected locations and recurring issues.
-- **Resilience planning:** Making organized local information more useful for preparedness and future planning.
+- 📍 Provide a centralized platform for hyperlocal environmental incident reporting.
+- 🤝 Encourage community participation in identifying and reporting local issues.
+- 🗺️ Display location-based information through interactive maps.
+- 🔎 Improve awareness of recurring environmental and infrastructure challenges.
+- 🛡️ Support community preparedness and informed decision-making.
+- 🌱 Make organized local information useful for climate resilience planning.
 
-> The availability of individual features depends on the current implementation of the live application.
+## ✨ Core Capabilities
 
-## How ResiliMap Supports the Process
+- **📝 Community incident reports** — Submit information about local environmental or infrastructure issues.
+- **🗺️ Interactive mapping** — Explore report locations using Leaflet-based map functionality.
+- **👤 Authentication and profiles** — User authentication and profile management through Supabase.
+- **🏛️ Authority workflow** — A scoped authority review process for reports, based on role and jurisdiction.
+- **🔔 Notifications and report history** — Report status changes, notifications, and status-history records.
+- **📎 Private report evidence** — Supports private image/video evidence storage for reports.
+- **🌦️ Weather insights** — Uses the Open-Meteo Forecast API for modelled current conditions and a five-day daily forecast.
+- **📊 Data visualization** — Uses Recharts for presenting relevant information.
 
-1. **Observe:** A community member identifies a local environmental or infrastructure issue.
-2. **Report:** The incident information is submitted through the platform, where supported.
-3. **Locate:** The information is associated with its geographical location.
-4. **Understand:** Users can view local information and gain awareness of affected areas.
-5. **Prepare:** Organized information can contribute to better community preparedness and resilience planning.
+*Feature descriptions are based on the supplied project configuration and Supabase setup documentation. Availability may depend on application configuration and the connected Supabase project.*
 
-## Potential Future Enhancements
+## 🔄 How It Works
 
-- AI-assisted categorization of incident reports.
-- Image-assisted report review and verification.
-- Integration with weather and environmental data sources.
-- Notifications for incidents in selected nearby areas.
-- Historical trends and analytical dashboards.
-- Risk-pattern analysis to help identify vulnerable locations.
-- Integration with relevant civic and disaster-management systems.
+1. **👀 Identify an issue** — A community member notices a local environmental or infrastructure problem.
+2. **📝 Submit a report** — The user provides report details and location information through the application.
+3. **📍 View local information** — Reports can be explored in their geographical context.
+4. **🔍 Review and update** — Authorized authorities can review reports within their assigned jurisdiction.
+5. **🛡️ Build awareness** — Organized incident information can help communities understand local challenges and prepare for future risks.
 
-## Live Demo
+## 🧰 Technology Stack
 
-Visit the deployed application:
+The following technologies and libraries are specified in the project's `package.json`, configuration files, and Supabase setup documentation.
 
-**https://resilimap.vercel.app/**
+| Category | Technology | Purpose |
+| --- | --- | --- |
+| **Frontend Framework** | React 18.3.1 | Builds the component-based user interface |
+| **Programming Language** | JavaScript (ES Modules) | Application logic and interactive functionality |
+| **Markup** | HTML5 | Application entry page and document structure |
+| **Styling** | Tailwind CSS 3.4.3 | Utility-first, responsive UI styling |
+| **CSS Processing** | PostCSS 8.4.38 | Processes CSS during the build |
+| **CSS Compatibility** | Autoprefixer 10.4.19 | Adds browser-specific CSS prefixes |
+| **Build Tool & Dev Server** | Vite 5.2.11 | Local development and production builds |
+| **Backend Platform** | Supabase | Backend services for authentication, database, and storage |
+| **Database** | PostgreSQL (through Supabase) | Stores application data, reports, profiles, and related records |
+| **Backend SDK** | Supabase JavaScript Client 2.117.3 | Connects the frontend to Supabase services |
+| **Map Library** | Leaflet 1.9.4 | Interactive map rendering |
+| **React Map Integration** | React Leaflet 4.2.1 | React components for Leaflet maps |
+| **Charts & Analytics UI** | Recharts 2.12.7 | Data visualization and charts |
+| **Icon Library** | Lucide React 1.59.0 | Interface icons |
+| **Weather Data API** | Open-Meteo Forecast API | Modelled current conditions and five-day forecast |
+| **Deployment** | Vercel | Hosts the deployed web application |
+| **Runtime / Package Manager** | Node.js and npm | Installs dependencies and runs project scripts |
 
-## Contributors
+### 🧩 Development Dependencies
 
-This project was collaboratively developed by:
+- `@vitejs/plugin-react` — React integration for Vite.
+- `vite` — Development server and bundler.
+- `tailwindcss` — Utility-first CSS framework.
+- `postcss` — CSS transformation tool.
+- `autoprefixer` — CSS vendor-prefix automation.
 
-| No. | Contributor |
-| ---: | --- |
-| 1 | Arya Shinde |
-| 2 | Mrunal Sagvekar |
-| 3 | Elissa Quadros |
-| 4 | Rahul Prajapati |
+## 🏗️ Project Structure
 
-## Project Information
+The supplied configuration confirms a Vite application with its HTML entry point at `index.html` and React source code under `src/`.
 
-| Item | Details |
-| --- | --- |
-| Project | ResiliMap |
-| Domain | Climate Resilience and Environmental Monitoring |
-| Application Type | Web Application |
-| Deployment | Vercel |
-| Live URL | https://resilimap.vercel.app/ |
-
-## Getting Started
-
-To run the project locally, clone the repository and follow the setup instructions defined by the project.
-
-```bash
-git clone <your-repository-url>
-cd <your-project-folder>
+```text
+ResiliMap/
+├── public/                  # Static public assets (if present)
+├── src/
+│   ├── main.jsx             # React application entry point
+│   └── ...                  # Application components and modules
+├── supabase/
+│   ├── migrations/          # Database schema and security migrations
+│   └── tests/               # Database regression tests (if present)
+├── index.html               # HTML entry point
+├── package.json             # Scripts and dependencies
+├── package-lock.json        # Locked dependency versions
+├── vite.config.js           # Vite configuration
+├── tailwind.config.js       # Tailwind CSS configuration
+├── postcss.config.js        # PostCSS configuration
+├── .gitignore               # Ignored files and folders
+└── SUPABASE_SETUP.md        # Supabase configuration and database setup
 ```
 
-Install dependencies and start the development server using the commands appropriate to the project's package manager and configuration. Refer to the project's `package.json` and any setup documentation for the exact commands.
+## 🚀 Getting Started
 
-## Technology Stack
+Follow these steps to run ResiliMap locally.
 
-Add the exact frameworks, libraries, database, mapping tools, and APIs used by this repository here. These details are intentionally not guessed from the deployed website.
+### ✅ Prerequisites
 
----
+Make sure the following are installed:
 
-## Vision
+- [Node.js](https://nodejs.org/) (a current supported LTS version is recommended)
+- npm (included with Node.js)
+- A [Supabase](https://supabase.com/) account and project for backend functionality
 
-ResiliMap aims to make local environmental information more visible and useful, helping communities move from scattered incident reports towards better awareness, preparedness, and climate resilience.
+### 1️⃣ Clone the Repository
 
-**ResiliMap – Map Today. Prepare for Tomorrow.**
+```bash
+git clone <YOUR_GITHUB_REPOSITORY_URL>
+cd <YOUR_PROJECT_FOLDER>
+```
+
+Replace the placeholders with your GitHub repository URL and project folder name.
+
+### 2️⃣ Install Dependencies
+
+```bash
+npm install
+```
+
+### 3️⃣ Configure Environment Variables
+
+Create a `.env` file in the project's root directory and add the Supabase project credentials:
+
+```env
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_publishable_or_anon_key
+```
+
+The weather endpoint can optionally be overridden:
+
+```env
+VITE_WEATHER_API_BASE_URL=https://api.open-meteo.com/v1/forecast
+```
+
+Use the exact variable names expected by the application. Never commit `.env` files, database passwords, or Supabase `service_role` keys. Any variable prefixed with `VITE_` is exposed to the browser and must not contain secrets.
+
+### 4️⃣ Configure Supabase
+
+The project uses Supabase for authentication, database access, and private report-evidence storage.
+
+Before using backend-dependent functionality:
+
+1. Create a Supabase project.
+2. Configure the project URL and publishable/anon key in `.env`.
+3. Configure the authentication redirect URLs for local development and the deployed website.
+4. Apply the database migrations in the order documented in [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md).
+5. Configure the private storage bucket and its policies as described in that setup guide.
+
+📘 **Important:** Read [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) carefully before setting up a fresh database. It contains the migration sequence, storage configuration, access-control notes, and authority workflow. Check the live Supabase migration history before applying migrations to an existing project; do not blindly rerun migrations.
+
+### 5️⃣ Run the Development Server
+
+```bash
+npm run dev
+```
+
+Vite will print the local development URL in the terminal. Open that URL in your browser.
+
+### 6️⃣ Create a Production Build
+
+```bash
+npm run build
+```
+
+The production-ready files are generated in the `dist/` directory.
+
+To preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## 📜 Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Starts the Vite development server |
+| `npm run build` | Creates an optimized production build |
+| `npm run preview` | Previews the production build locally |
+
+## 🔐 Security Notes
+
+- Keep `.env` out of version control.
+- Never expose Supabase `service_role` keys or database passwords in frontend code.
+- Use Supabase Row Level Security (RLS) and the database permissions defined by the project migrations.
+- Keep report evidence in the configured private storage bucket.
+- Configure authentication redirect URLs for both local development and the deployed application.
+- Review the Open-Meteo usage terms and attribution requirements before deployment or commercial use.
+
+## 🌦️ External Data & Services
+
+**Open-Meteo:** The supplied Supabase setup guide documents use of the Open-Meteo Forecast API for modelled current conditions and a five-day daily forecast. The documented free endpoint does not require an API key and is intended for non-commercial use subject to its terms and attribution requirements.
+
+- API: https://api.open-meteo.com/v1/forecast
+- Terms: https://open-meteo.com/en/terms
+- Pricing: https://open-meteo.com/en/pricing
+
+**Supabase:** Used for authentication, application data, database access policies, and private report evidence storage.
+
+- Documentation: https://supabase.com/docs
+
+## 🔮 Future Scope
+
+Potential enhancements for the platform include:
+
+- 🤖 AI-assisted classification of environmental incident reports.
+- 🖼️ Improved image-assisted report review and verification.
+- 🔔 More configurable location-based alerts.
+- 📈 Advanced historical analytics and risk-trend dashboards.
+- 🌧️ Additional environmental data integrations.
+- 🏙️ Expansion to more localities and service jurisdictions.
+- 🏛️ Further integration with civic and disaster-management workflows.
+
+## 👥 Contributors
+
+Developed with ❤️ by:
+
+| No. | Contributor |
+| :---: | --- |
+| 1 | **Arya Shinde** |
+| 2 | **Mrunal Sagvekar** |
+| 3 | **Elissa Quadros** |
+| 4 | **Rahul Prajapati** |
+
+## 📂 Additional Documentation
+
+- [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) — Supabase configuration, database migrations, storage setup, security model, and authority workflow.
+
+## 🌍 Our Vision
+
+To empower communities with reliable, localized environmental information and encourage collective action towards safer, better-prepared, and more climate-resilient neighbourhoods.
+
+<div align="center">
+
+### 🗺️ ResiliMap — Map Today. Prepare for Tomorrow. 🌱
+
+**Built with purpose. Driven by community. Designed for resilience.**
+
+[🌐 Open ResiliMap](https://resilimap.vercel.app/)
+
+</div>
 """
 
 output_path = "/mnt/data/README.md"
 pypandoc.convert_text(readme, "md", format="md", outputfile=output_path, extra_args=["--standalone"])
-print(f"Created: {output_path}")
+print(f"Created updated README with the verified technology stack: {output_path}")
