@@ -52,7 +52,7 @@ A unified platform is needed to help communities report, locate, and understand 
 - **🌦️ Weather insights** — Uses the Open-Meteo Forecast API for modelled current conditions and a five-day daily forecast.
 - **📊 Data visualization** — Uses Recharts for presenting relevant information.
 
-*Feature descriptions are based on the supplied project configuration and Supabase setup documentation. Availability may depend on application configuration and the connected Supabase project.*
+
 
 ## 🔄 How It Works
 
