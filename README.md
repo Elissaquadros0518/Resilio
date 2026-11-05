@@ -1,4 +1,4 @@
-
+<div align="center">
 
 # 🌍 ResiliMap
 
@@ -7,12 +7,33 @@
 **A community-powered climate resilience platform for hyperlocal environmental awareness.**
 
 [![Live Website](https://img.shields.io/badge/🌐_Live_Website-Visit_ResiliMap-0F766E?style=for-the-badge)](https://resilimap.vercel.app/)
+
 [![React](https://img.shields.io/badge/React-18.3.1-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-5.2.11-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.3-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-3FCF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
 
 </div>
+
+---
+
+## 📑 Table of Contents
+
+- [About the Project](#-about-the-project)
+- [Problem Statement](#-problem-statement)
+- [Objectives](#-objectives)
+- [Core Capabilities](#-core-capabilities)
+- [How It Works](#-how-it-works)
+- [Technology Stack](#-technology-stack)
+- [Project Structure](#️-project-structure)
+- [Getting Started](#-getting-started)
+- [Available Scripts](#-available-scripts)
+- [Security Notes](#-security-notes)
+- [External Data & Services](#️-external-data--services)
+- [Future Scope](#-future-scope)
+- [Contributors](#-contributors)
+- [Additional Documentation](#-additional-documentation)
+- [Our Vision](#-our-vision)
 
 ---
 
@@ -51,8 +72,6 @@ A unified platform is needed to help communities report, locate, and understand 
 - **📎 Private report evidence** — Supports private image/video evidence storage for reports.
 - **🌦️ Weather insights** — Uses the Open-Meteo Forecast API for modelled current conditions and a five-day daily forecast.
 - **📊 Data visualization** — Uses Recharts for presenting relevant information.
-
-
 
 ## 🔄 How It Works
 
@@ -96,7 +115,7 @@ The following technologies and libraries are specified in the project's `package
 
 ## 🏗️ Project Structure
 
-The supplied configuration confirms a Vite application with its HTML entry point at `index.html` and React source code under `src/`.
+The project is a Vite application with its HTML entry point at `index.html` and React source code under `src/`.
 
 ```text
 ResiliMap/
@@ -159,7 +178,7 @@ The weather endpoint can optionally be overridden:
 VITE_WEATHER_API_BASE_URL=https://api.open-meteo.com/v1/forecast
 ```
 
-Use the exact variable names expected by the application. Never commit `.env` files, database passwords, or Supabase `service_role` keys. Any variable prefixed with `VITE_` is exposed to the browser and must not contain secrets.
+> ⚠️ Use the exact variable names expected by the application. Never commit `.env` files, database passwords, or Supabase `service_role` keys. Any variable prefixed with `VITE_` is exposed to the browser and must not contain secrets.
 
 ### 4️⃣ Configure Supabase
 
@@ -173,7 +192,7 @@ Before using backend-dependent functionality:
 4. Apply the database migrations in the order documented in [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md).
 5. Configure the private storage bucket and its policies as described in that setup guide.
 
-📘 **Important:** Read [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) carefully before setting up a fresh database. It contains the migration sequence, storage configuration, access-control notes, and authority workflow. Check the live Supabase migration history before applying migrations to an existing project; do not blindly rerun migrations.
+> 📘 **Important:** Read [`SUPABASE_SETUP.md`](./SUPABASE_SETUP.md) carefully before setting up a fresh database. It contains the migration sequence, storage configuration, access-control notes, and authority workflow. Check the live Supabase migration history before applying migrations to an existing project; do not blindly rerun migrations.
 
 ### 5️⃣ Run the Development Server
 
@@ -216,7 +235,7 @@ npm run preview
 
 ## 🌦️ External Data & Services
 
-**Open-Meteo:** The supplied Supabase setup guide documents use of the Open-Meteo Forecast API for modelled current conditions and a five-day daily forecast. The documented free endpoint does not require an API key and is intended for non-commercial use subject to its terms and attribution requirements.
+**Open-Meteo:** The Supabase setup guide documents use of the Open-Meteo Forecast API for modelled current conditions and a five-day daily forecast. The documented free endpoint does not require an API key and is intended for non-commercial use, subject to its terms and attribution requirements.
 
 - API: https://api.open-meteo.com/v1/forecast
 - Terms: https://open-meteo.com/en/terms
@@ -257,6 +276,8 @@ Developed with ❤️ by:
 
 To empower communities with reliable, localized environmental information and encourage collective action towards safer, better-prepared, and more climate-resilient neighbourhoods.
 
+---
+
 <div align="center">
 
 ### 🗺️ ResiliMap — Map Today. Prepare for Tomorrow. 🌱
@@ -266,8 +287,3 @@ To empower communities with reliable, localized environmental information and en
 [🌐 Open ResiliMap](https://resilimap.vercel.app/)
 
 </div>
-"""
-
-output_path = "/mnt/data/README.md"
-pypandoc.convert_text(readme, "md", format="md", outputfile=output_path, extra_args=["--standalone"])
-print(f"Created updated README with the verified technology stack: {output_path}")
