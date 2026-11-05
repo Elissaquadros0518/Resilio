@@ -1,6 +1,4 @@
-import pypandoc
 
-readme = r"""<div align="center">
 
 # 🌍 ResiliMap
 
